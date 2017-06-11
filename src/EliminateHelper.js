@@ -22,6 +22,7 @@ var EliminateHelper = {
     _disablePointV: [], // 不可用的点
     _disableValueV: [0], // 不可用的值
     _ignorePoint: cc.p(-1, -1), // 忽略点
+    _emptyType: 0,
     _reData: function () {
         this._setDisableP(-1, -1);
         this._setReplaceP(-1, -1);
@@ -34,19 +35,62 @@ var EliminateHelper = {
     getElArry: function (p) {
         var j = p.x;
         var i = p.y;
-
         var cubeArry = [];
+        var value = this._map[i][j];
+        if (this._emptyType == value) {
+            return cubeArry;
+        }
         var cTypeArry = this._isEliminateType(p);
         if (cTypeArry.length > 0) {
             cubeArry.push(cc.p(j, i))
-            var value = this._map[i][j];
             for (var n = 0; n < cTypeArry.length; n++) {
                 var dp = cTypeArry[n];
                 var dPoint = cc.p(j + dp.x, i + dp.y);
                 this._searchEArry(dPoint, dp, value, cubeArry);
             }
         }
+        this.setMapEmptyCube(cubeArry);
+
         return cubeArry;
+    },
+    // 下落方块
+    moveDownCube: function () {
+        var map = this._map;
+        var mdArry = [];
+        for (var n = 0; n < map[0].length; n++) {
+            for (var m = map.length - 1; m >= 0; m--) {
+                if (map[m][n] == this._emptyType) {
+                    var cObj = this._searchDownCube(cc.p(n, m));
+                    if (cObj) {
+                        mdArry.push(cObj);
+                    }
+                }
+            }
+        }
+        return mdArry;
+    },
+    _searchDownCube: function (p) {
+        var map = this._map;
+        var cObj = null;
+        var nextP = p;
+        while (true) {
+            nextP = cc.p(nextP.x, nextP.y - 1);
+            if (!this._checkP(nextP)) {
+                break;
+            }
+            if (map[nextP.y][nextP.x] != this._emptyType) {
+                cObj = {"beganP": nextP, "endP": p};
+                this._swapPValue(nextP, p);
+                break;
+            }
+        }
+        return cObj;
+    },
+    setMapEmptyCube: function (cubeArry) {
+        for (var i = 0; i < cubeArry.length; i++) {
+            var objP = cubeArry[i];
+            this._map[objP.y][objP.x] = this._emptyType;
+        }
     },
     _searchEArry: function (p, dp, value, cArry) {
         if (!this._checkP(p)) {
@@ -89,7 +133,6 @@ var EliminateHelper = {
                 if (elFlag) {
                     return true;
                 }
-
             }
         }
 
@@ -150,8 +193,6 @@ var EliminateHelper = {
                 }
             }
         }
-
-
         return cArry;
     },
     // 不重复添加到数组
@@ -162,7 +203,6 @@ var EliminateHelper = {
                 return;
             }
         }
-
         carry.push(p);
     },
     _swapPValue: function (p1, p2) {
@@ -185,6 +225,9 @@ var EliminateHelper = {
         return false;
     },
     isEnableP: function (p) {
+        if (this._map[p.y][p.x] == this._emptyType) {
+            return false;
+        }
         return this._checkP(p);
     },
     _checkP: function (p) {
@@ -253,5 +296,17 @@ var EliminateHelper = {
         var value = this._map[p1.y][p1.x];
         this._map[p1.y][p1.x] = this._map[p2.y][p2.x];
         this._map[p2.y][p2.x] = value;
+    },
+    debugLog: function () {
+        var map = this._map;
+        cc.log("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+        for (var m = 0; m < this._map.length; m++) {
+            var str = " ";
+            for (var n = 0; n < this._map[0].length; n++) {
+                str = str + map[m][n] + "  ";
+            }
+            console.log(str);
+        }
     }
+
 }
