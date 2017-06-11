@@ -166,6 +166,9 @@ var EliminateHelper = {
         }
         return false;
     },
+    isEnableP: function (p) {
+        return this._checkP(p);
+    },
     _checkP: function (p) {
         var i = p.y;
         var j = p.x;
@@ -203,11 +206,11 @@ var EliminateHelper = {
         this.clearMap();
         for (var m = 0; m < this._map.length; m++) {
             for (var n = 0; n < this._map[0].length; n++) {
-                while (true){
+                while (true) {
                     var randnum = this.getRandNum(1, 6);
                     this._map[m][n] = randnum;
                     if (!this.isEliminate(cc.p(n, m))) {
-                       break;
+                        break;
                     }
                 }
             }
