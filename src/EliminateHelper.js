@@ -229,6 +229,13 @@ var EliminateHelper = {
         var randnum = Math.random() * max + min;
         var num = Math.floor(randnum);
         return num;
+    },
+    swapCube: function (p1, p2) {
+        if (!(this.isEnableP(p1) && this.isEnableP(p2))) {
+            return;
+        }
+        var value = this._map[p1.y][p1.x];
+        this._map[p1.y][p1.x] = this._map[p2.y][p2.x];
+        this._map[p2.y][p2.x] = value;
     }
-
 }

@@ -184,12 +184,13 @@ var HelloWorldLayer = cc.Layer.extend({
         var cube1P = cube1.getPosition();
         var cube2P = cube2.getPosition();
 
-        cube1.runAction(cc.moveTo(1, cube2P));
-        cube2.runAction(cc.moveTo(1, cube1P));
+        cube1.runAction(cc.moveTo(0.5, cube2P));
+        cube2.runAction(cc.moveTo(0.5, cube1P));
 
         this.cubeArry[index1] = cube2;
         this.cubeArry[index2] = cube1;
 
+        EliminateHelper.swapCube(p1, p2);
     }
 });
 
