@@ -53,6 +53,22 @@ var EliminateHelper = {
 
         return cubeArry;
     },
+    // 创建下落的方块
+    createDownCube: function () {
+        var map = this._map;
+        var mdArry = [];
+        for (var n = 0; n < map[0].length; n++) {
+            var arry = [];
+            for (var m = map.length - 1; m >= 0; m--) {
+                if (map[m][n] == this._emptyType) {
+                    map[m][n] = this.getRandNum(1, 6);
+                    arry.push(cc.p(n, m));
+                }
+            }
+            mdArry.push(arry);
+        }
+        return mdArry;
+    },
     // 下落方块
     moveDownCube: function () {
         var map = this._map;

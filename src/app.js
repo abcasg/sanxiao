@@ -5,40 +5,13 @@ var HelloWorldLayer = cc.Layer.extend({
     mapOriginP: null,
     touchBeganP: null,
     cubeArry: [], // 保存方块
-    cubeMoveV: 250, // 块的下落速度
+    cubeMoveV: 400, // 块的下落速度
+    swapCubeT: 0.4, // 交换速度
     ctor: function () {
         this._super();
-        var size = cc.winSize;
         this.initData();
         this.initUI();
         this.addTouchListener();
-
-        //var helloLabel = new cc.LabelTTF("Hello World", "Arial", 38);
-        //helloLabel.x = size.width / 2;
-        //helloLabel.y = size.height / 2 + 200;
-        //// add the label as a child to this layer
-        //this.addChild(helloLabel, 5);
-        //
-        //// add "HelloWorld" splash screen"
-        //this.sprite = new cc.Sprite(res.cube_png1);
-        //this.sprite.attr({
-        //    x: size.width / 2,
-        //    y: size.height / 2
-        //});
-        //this.addChild(this.sprite, 0);
-        //
-        //var label = cc.LabelTTF.create("Main Menu", "Arial", 20);
-        //
-        //if (EliminateHelper.haveEliminate()) {
-        //    console.log("have");
-        //} else {
-        //    console.log("not have");
-        //
-        //}
-        //
-        //var carry = EliminateHelper.getElArry(cc.p(3, 4));
-        //console.log("end");
-
         return true;
     },
     initUI: function () {
@@ -47,14 +20,7 @@ var HelloWorldLayer = cc.Layer.extend({
 
         for (var m = 0; m < this.mapSize.height; m++) {
             for (var n = 0; n < this.mapSize.width; n++) {
-
-
-                var cubeSp = new cc.Sprite(res["cube_png" + Map[m][n]]);
-                var label = cc.LabelTTF.create("" + Map[m][n], "Arial", 40);
-                label.setColor(cc.color(0, 0, 0));
-                label.setPosition(cc.p(this.cubeSize.width / 2, this.cubeSize.height / 2));
-
-                cubeSp.addChild(label);
+                var cubeSp = this.createCubeSp(Map[m][n]);
                 cubeSp.setPositionX(this.mapOriginP.x + n * this.cubeSize.width);
                 cubeSp.setPositionY(this.mapOriginP.y - m * this.cubeSize.height);
                 this.addChild(cubeSp);
@@ -201,11 +167,12 @@ var HelloWorldLayer = cc.Layer.extend({
         var cube1P = cube1.getPosition();
         var cube2P = cube2.getPosition();
 
-        cube1.runAction(cc.moveTo(0.5, cube2P));
+        cube1.runAction(cc.moveTo(this.swapCubeT, cube2P));
         cube2.runAction(cc.sequence(
-            cc.moveTo(0.5, cube1P),
+            cc.moveTo(this.swapCubeT, cube1P),
             cc.callFunc(function () {
                 this.eliminateCube(endP);
+                this.eliminateCube(startP);
             }, this)));
 
         this.swapCubeObject(startP, endP);
@@ -214,6 +181,9 @@ var HelloWorldLayer = cc.Layer.extend({
     getMoveTime: function (logicP1, logicP2) {
         var p1 = this.getScreenP(logicP1);
         var p2 = this.getScreenP(logicP2);
+        return this.getMoveTimeBS(p1, p2);
+    },
+    getMoveTimeBS: function (p1, p2) {
         var time = Math.abs((p1.y - p2.y) / this.cubeMoveV);
         return time;
     },
@@ -238,17 +208,25 @@ var HelloWorldLayer = cc.Layer.extend({
     // 消除
     eliminateCube: function (p) {
         var cubeArry = EliminateHelper.getElArry(p);
-
-        if (cubeArry.length >= 3) {
-            for (var i = 0; i < cubeArry.length; i++) {
-                var objP = cubeArry[i];
-                var cube = this.getCubeSpByP(objP);
-                cube.setVisible(false);
-            }
+        if (cubeArry.length < 3) {
+            return;
         }
+        EliminateHelper.debugLog();
+        for (var i = 0; i < cubeArry.length; i++) {
+            var objP = cubeArry[i];
+            var cube = this.getCubeSpByP(objP);
+            cube.setVisible(false);
+            cube.removeFromParent();
+        }
+
         //   EliminateHelper.debugLog();
         var mdArry = EliminateHelper.moveDownCube();
-        // console.log("cubeArry.length " + cubeArry.length + " mdArry.length " + mdArry.length + " p.x " + p.x + " p.y " + p.y);
+        if (cubeArry.length >= 3 && mdArry.length == 0) {
+            this.createDownCube();
+            return;
+        }
+
+        //console.log("cubeArry.length " + cubeArry.length + " mdArry.length " + mdArry.length + " p.x " + p.x + " p.y " + p.y);
         for (var i = 0; i < mdArry.length; i++) {
             var obj = mdArry[i];
             // 交换位置
@@ -259,13 +237,46 @@ var HelloWorldLayer = cc.Layer.extend({
             cube.runAction(cc.sequence(
                 cc.moveTo(this.getMoveTime(obj.beganP, obj.endP), this.getScreenP(obj.endP)),
                 cc.callFunc(function (target, data) {
+                    // this.createDownCube(data);
                     // 递归检测
                     this.eliminateCube(data);
+                    this.createDownCube(data);
+
                 }, this, obj.endP)));
         }
-        // EliminateHelper.debugLog();
+        //EliminateHelper.debugLog();
+    },
+    createDownCube: function (cdata) {
+        var mdArry = EliminateHelper.createDownCube();
+        for (var i = 0; i < mdArry.length; i++) {
+            var arry = mdArry[i];
+            for (var j = 0; j < arry.length; j++) {
+                var objP = arry[j];
+                var cube = this.createCubeSp(Map[objP.y][objP.x]);
+                this.setCubeSpByP(objP, cube);
+                this.addChild(cube);
+                var screenP = this.getScreenP(objP);
+                var beganP = cc.p(screenP.x, this.mapOriginP.y + (arry.length - objP.y) * this.cubeSize.height);
+                cube.setPosition(beganP);
+                var action = cc.moveTo(this.getMoveTimeBS(screenP, beganP), screenP);
+                cube.runAction(cc.sequence(
+                    action, cc.callFunc(function (target, data) {
+                        this.eliminateCube(data);
+                        this.createDownCube(data);
+                    }, this, objP)));
+            }
+        }
+    },
+    createCubeSp: function (index) {
+        var cubeSp = new cc.Sprite(res["cube_png" + index]);
+        var label = cc.LabelTTF.create("" + index, "Arial", 40);
+        label.setColor(cc.color(0, 0, 0));
+        label.setPosition(cc.p(this.cubeSize.width / 2, this.cubeSize.height / 2));
+        //cubeSp.addChild(label);
 
+        return cubeSp;
     }
+
 });
 
 
