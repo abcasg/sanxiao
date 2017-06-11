@@ -35,19 +35,18 @@ var EliminateHelper = {
         var j = p.x;
         var i = p.y;
 
-        var cArry = [];
-        if (this.isEliminate(cc.p(j, i))) {
-            cArry.push(cc.p(j, i))
+        var cubeArry = [];
+        var cTypeArry = this._isEliminateType(p);
+        if (cTypeArry.length > 0) {
+            cubeArry.push(cc.p(j, i))
             var value = this._map[i][j];
-
-            for (var n = 0; n < this._directionP.length; n++) {
-                var dp = this._directionP[n];
-                var dPoint = cc.p(j + dp.dj, i + dp.di);
-                var offsetP = cc.p(dp.dj, dp.di);
-                this._searchEArry(dPoint, offsetP, value, cArry);
+            for (var n = 0; n < cTypeArry.length; n++) {
+                var dp = cTypeArry[n];
+                var dPoint = cc.p(j + dp.x, i + dp.y);
+                this._searchEArry(dPoint, dp, value, cubeArry);
             }
         }
-        return cArry;
+        return cubeArry;
     },
     _searchEArry: function (p, dp, value, cArry) {
         if (!this._checkP(p)) {
@@ -55,6 +54,8 @@ var EliminateHelper = {
         }
         if (value == this._map[p.y][p.x]) {
             cArry.push(p);
+        } else {
+            return;
         }
         var nextP = cc.p(p.x + dp.x, p.y + dp.y);
         this._searchEArry(nextP, dp, value, cArry);
@@ -74,7 +75,6 @@ var EliminateHelper = {
     },
     _moveSearch: function (i, j) {
         console.log("i " + i + " j " + j);
-        //this._ignorePoint = cc.p(j, i);
         var cP = cc.p(j, i);
 
         for (var n = 0; n < this._directionP.length; n++) {
@@ -97,55 +97,73 @@ var EliminateHelper = {
     },
     // 可消除
     isEliminate: function (p) {
+        var cArry = this._isEliminateType(p);
+        if (cArry.length > 0) {
+            return true;
+        }
+        return false;
+    },
+    _isEliminateType: function (p) {
         var j = p.x;
         var i = p.y;
         var map = this._map;
         var cP = cc.p(j, i);
 
-        // 比较上下左右 两个点的值
-        for (var m = 0; m < this._directionDP.length; m++) {
-            var objP = this._directionDP[m];
-            var objP0 = cc.p(objP[0].dj + j, objP[0].di + i);
-            var objP1 = cc.p(objP[1].dj + j, objP[1].di + i);
-
-            // 不在忽略点
-            if (this._compareP(objP0, this._ignorePoint) || this._compareP(objP1, this._ignorePoint)) {
-                continue;
-            }
-            // map[i + objP0.di][j + objP0.dj]
-            if (this._checkP(objP0) && this._checkP(objP1)) {
-                if (this._compareMapValue(cP, objP0) && this._compareMapValue(cP, objP1)) {
-                    return true;
-                    break;
-                }
-            }
-        }
+        var cArry = [];
 
         // 比较中心十字点的值
+        var bIndex = 0;
         // 左右
         var pLeft = cc.p(cP.x - 1, cP.y);
         var pRight = cc.p(cP.x + 1, cP.y);
-        if (!(this._compareP(pLeft, this._ignorePoint) || this._compareP(pRight, this._ignorePoint))) {
-            if (this._checkP(pLeft) && this._checkP(pRight)) {
-                if (this._compareMapValue(cP, pLeft) && this._compareMapValue(cP, pRight)) {
-                    return true;
-                }
+
+        if (this._checkP(pLeft) && this._checkP(pRight)) {
+            if (this._compareMapValue(cP, pLeft) && this._compareMapValue(cP, pRight)) {
+                this.pushArryUnique(cArry, cc.p(-1, 0));
+                this.pushArryUnique(cArry, cc.p(1, 0));
+                bIndex = 2;
             }
         }
-
 
         // 上下
         var pUp = cc.p(cP.x, cP.y - 1);
         var pDown = cc.p(cP.x, cP.y + 1);
 
-        if (!(this._compareP(pUp, this._ignorePoint) || this._compareP(pDown, this._ignorePoint))) {
-            if (this._checkP(pUp) && this._checkP(pDown)) {
-                if (this._compareMapValue(cP, pUp) && this._compareMapValue(cP, pDown)) {
-                    return true;
+        if (this._checkP(pUp) && this._checkP(pDown)) {
+            if (this._compareMapValue(cP, pUp) && this._compareMapValue(cP, pDown)) {
+                this.pushArryUnique(cArry, cc.p(0, 1));
+                this.pushArryUnique(cArry, cc.p(0, -1));
+                bIndex = this._directionDP.length;
+            }
+        }
+
+        // 比较上下左右 两个点的值
+        for (var m = bIndex; m < this._directionDP.length; m++) {
+            var objP = this._directionDP[m];
+            var objP0 = cc.p(objP[0].dj + j, objP[0].di + i);
+            var objP1 = cc.p(objP[1].dj + j, objP[1].di + i);
+
+            // map[i + objP0.di][j + objP0.dj]
+            if (this._checkP(objP0) && this._checkP(objP1)) {
+                if (this._compareMapValue(cP, objP0) && this._compareMapValue(cP, objP1)) {
+                    this.pushArryUnique(cArry, cc.p(objP[0].dj, objP[0].di));
                 }
             }
         }
-        return false;
+
+
+        return cArry;
+    },
+    // 不重复添加到数组
+    pushArryUnique: function (carry, p) {
+        for (var i = 0; i < carry.length; i++) {
+            var objP = carry[i];
+            if (this._compareP(objP, p)) {
+                return;
+            }
+        }
+
+        carry.push(p);
     },
     _swapPValue: function (p1, p2) {
         var map = this._map;
@@ -215,8 +233,6 @@ var EliminateHelper = {
                 }
             }
         }
-
-
     },
     clearMap: function () {
         for (var m = 0; m < this._map.length; m++) {

@@ -42,7 +42,7 @@ var HelloWorldLayer = cc.Layer.extend({
     },
     initUI: function () {
         // 初始地图
-        EliminateHelper.createRandMap();
+       // EliminateHelper.createRandMap();
 
         for (var m = 0; m < this.mapSize.height; m++) {
             for (var n = 0; n < this.mapSize.width; n++) {
@@ -174,23 +174,53 @@ var HelloWorldLayer = cc.Layer.extend({
             this.swapCube(logicP, swapP);
         }
     },
-    swapCube: function (p1, p2) {
-        var index1 = p1.x + p1.y * this.mapSize.width;
-        var index2 = p2.x + p2.y * this.mapSize.width;
+    swapCube: function (startP, endP) {
 
-        var cube1 = this.cubeArry[index1];
-        var cube2 = this.cubeArry[index2];
+        // 先交换
+        EliminateHelper.swapCube(startP, endP);
+        // 没有可消除的，则换回来
+        if (!EliminateHelper.isEliminate(endP)) {
+            console.log("no eliminate");
+            EliminateHelper.swapCube(startP, endP);
+            return;
+        }
+
+
+        var cube1 = this.getCubeSpByP(startP);
+        var cube2 = this.getCubeSpByP(endP);
 
         var cube1P = cube1.getPosition();
         var cube2P = cube2.getPosition();
 
         cube1.runAction(cc.moveTo(0.5, cube2P));
-        cube2.runAction(cc.moveTo(0.5, cube1P));
+        cube2.runAction(cc.sequence(
+            cc.moveTo(0.5, cube1P),
+            cc.callFunc(function(){
+                this.eliminateCube(endP);
+            },this)));
 
-        this.cubeArry[index1] = cube2;
-        this.cubeArry[index2] = cube1;
+        this.setCubeSpByp(startP,cube2);
+        this.setCubeSpByp(endP,cube1);
 
-        EliminateHelper.swapCube(p1, p2);
+
+    },
+    getCubeSpByP:function(p){
+        return this.cubeArry[p.x + p.y * this.mapSize.width];
+    },
+    setCubeSpByp:function(p,cube){
+        this.cubeArry[p.x + p.y * this.mapSize.width] = cube;
+    },
+    // 消除
+    eliminateCube: function (p) {
+        var cubeArry = EliminateHelper.getElArry(p);
+        console.log("cubeArry.length " + cubeArry.length);
+        if (cubeArry.length >= 3) {
+            for (var i = 0; i < cubeArry.length; i++) {
+                var objP = cubeArry[i];
+                var cube = this.getCubeSpByP(objP);
+                cube.setVisible(false);
+            }
+        }
     }
 });
 
