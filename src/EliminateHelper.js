@@ -62,6 +62,7 @@ var EliminateHelper = {
             for (var m = map.length - 1; m >= 0; m--) {
                 if (map[m][n] == this._emptyType) {
                     map[m][n] = this.getRandNum(1, 6);
+                    //map[m][n] = 1;
                     arry.push(cc.p(n, m));
                 }
             }

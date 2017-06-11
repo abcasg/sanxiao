@@ -5,7 +5,7 @@ var HelloWorldLayer = cc.Layer.extend({
     mapOriginP: null,
     touchBeganP: null,
     cubeArry: [], // 保存方块
-    cubeMoveV: 400, // 块的下落速度
+    cubeMoveV: 450, // 块的下落速度
     swapCubeT: 0.4, // 交换速度
     ctor: function () {
         this._super();
@@ -164,15 +164,18 @@ var HelloWorldLayer = cc.Layer.extend({
         var cube1 = this.getCubeSpByP(startP);
         var cube2 = this.getCubeSpByP(endP);
 
-        var cube1P = cube1.getPosition();
-        var cube2P = cube2.getPosition();
+        var cube1P = this.getScreenP(startP);
+        var cube2P = this.getScreenP(endP);
+
+        cube1.stopAllActions();
+        cube2.stopAllActions();
 
         cube1.runAction(cc.moveTo(this.swapCubeT, cube2P));
         cube2.runAction(cc.sequence(
             cc.moveTo(this.swapCubeT, cube1P),
             cc.callFunc(function () {
-                this.eliminateCube(endP);
                 this.eliminateCube(startP);
+                this.eliminateCube(endP);
             }, this)));
 
         this.swapCubeObject(startP, endP);
@@ -229,24 +232,23 @@ var HelloWorldLayer = cc.Layer.extend({
         //console.log("cubeArry.length " + cubeArry.length + " mdArry.length " + mdArry.length + " p.x " + p.x + " p.y " + p.y);
         for (var i = 0; i < mdArry.length; i++) {
             var obj = mdArry[i];
-            // 交换位置
             var cube = this.getCubeSpByP(obj.beganP);
             cube.stopAllActions();
             cube.setPosition(this.getScreenP(obj.beganP));
+            // 交换位置
             this.swapCubeObject(obj.beganP, obj.endP);
+            //var endScP = this.getScreenP(obj.endP);
             cube.runAction(cc.sequence(
                 cc.moveTo(this.getMoveTime(obj.beganP, obj.endP), this.getScreenP(obj.endP)),
+                // cc.moveTo(this.getMoveTimeBS(cube.getPosition(), endScP), this.getScreenP(obj.endP)),
                 cc.callFunc(function (target, data) {
-                    // this.createDownCube(data);
-                    // 递归检测
+                    this.createDownCube();
                     this.eliminateCube(data);
-                    this.createDownCube(data);
-
                 }, this, obj.endP)));
         }
         //EliminateHelper.debugLog();
     },
-    createDownCube: function (cdata) {
+    createDownCube: function () {
         var mdArry = EliminateHelper.createDownCube();
         for (var i = 0; i < mdArry.length; i++) {
             var arry = mdArry[i];
@@ -259,10 +261,11 @@ var HelloWorldLayer = cc.Layer.extend({
                 var beganP = cc.p(screenP.x, this.mapOriginP.y + (arry.length - objP.y) * this.cubeSize.height);
                 cube.setPosition(beganP);
                 var action = cc.moveTo(this.getMoveTimeBS(screenP, beganP), screenP);
+                cube.stopAllActions();
                 cube.runAction(cc.sequence(
                     action, cc.callFunc(function (target, data) {
+                        this.createDownCube();
                         this.eliminateCube(data);
-                        this.createDownCube(data);
                     }, this, objP)));
             }
         }
@@ -272,7 +275,7 @@ var HelloWorldLayer = cc.Layer.extend({
         var label = cc.LabelTTF.create("" + index, "Arial", 40);
         label.setColor(cc.color(0, 0, 0));
         label.setPosition(cc.p(this.cubeSize.width / 2, this.cubeSize.height / 2));
-        //cubeSp.addChild(label);
+        cubeSp.addChild(label);
 
         return cubeSp;
     }
