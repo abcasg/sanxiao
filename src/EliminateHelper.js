@@ -301,11 +301,11 @@ var EliminateHelper = {
         var map = this._map;
         cc.log("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
         for (var m = 0; m < this._map.length; m++) {
-            var str = " ";
+            var str = "[ ";
             for (var n = 0; n < this._map[0].length; n++) {
-                str = str + map[m][n] + "  ";
+                str = str + map[m][n] + " , ";
             }
-            console.log(str);
+            console.log(str + "],");
         }
     }
 

@@ -238,7 +238,7 @@ var HelloWorldLayer = cc.Layer.extend({
     // 消除
     eliminateCube: function (p) {
         var cubeArry = EliminateHelper.getElArry(p);
-        console.log("cubeArry.length " + cubeArry.length);
+
         if (cubeArry.length >= 3) {
             for (var i = 0; i < cubeArry.length; i++) {
                 var objP = cubeArry[i];
@@ -246,8 +246,9 @@ var HelloWorldLayer = cc.Layer.extend({
                 cube.setVisible(false);
             }
         }
-        EliminateHelper.debugLog();
+        //   EliminateHelper.debugLog();
         var mdArry = EliminateHelper.moveDownCube();
+        // console.log("cubeArry.length " + cubeArry.length + " mdArry.length " + mdArry.length + " p.x " + p.x + " p.y " + p.y);
         for (var i = 0; i < mdArry.length; i++) {
             var obj = mdArry[i];
             // 交换位置
@@ -257,11 +258,12 @@ var HelloWorldLayer = cc.Layer.extend({
             this.swapCubeObject(obj.beganP, obj.endP);
             cube.runAction(cc.sequence(
                 cc.moveTo(this.getMoveTime(obj.beganP, obj.endP), this.getScreenP(obj.endP)),
-                cc.callFunc(function () {
-
-                }, this)));
+                cc.callFunc(function (target, data) {
+                    // 递归检测
+                    this.eliminateCube(data);
+                }, this, obj.endP)));
         }
-        EliminateHelper.debugLog();
+        // EliminateHelper.debugLog();
 
     }
 });
