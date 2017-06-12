@@ -34,7 +34,6 @@ var HelloWorldLayer = cc.Layer.extend({
         }
     },
     initData: function () {
-        var cubeSp = new cc.Sprite(res.cbue_png1);
         this.cubeSize = cc.size(71, 71);
         this.mapSize = cc.size(Map[0].length, Map.length);
 
@@ -145,8 +144,8 @@ var HelloWorldLayer = cc.Layer.extend({
             }
         }
         var swapP = cc.p(logicP.x + dP.x, logicP.y + dP.y);
-        console.log("logicPx " + logicP.x + " logicPy " + logicP.y);
-        console.log("swapPx " + swapP.x + " swapPy " + swapP.y);
+        //console.log("logicPx " + logicP.x + " logicPy " + logicP.y);
+        //console.log("swapPx " + swapP.x + " swapPy " + swapP.y);
         if (swapP && EliminateHelper.isEnableP(swapP)) {
             this.swapCube(logicP, swapP);
         }

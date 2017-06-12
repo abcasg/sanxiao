@@ -3,8 +3,6 @@
  */
 
 var EliminateHelper = {
-    _cArry: [],
-    _disableP: {"i": -1, "j": -1}, // 不检测点
     _replaceP: {"i": -1, "j": -1}, // 检测代替点
     _directionP: [
         {"di": -1, "dj": 0}, // 下
@@ -21,16 +19,7 @@ var EliminateHelper = {
     _map: Map,
     _disablePointV: [], // 不可用的点
     _disableValueV: [0], // 不可用的值
-    _ignorePoint: cc.p(-1, -1), // 忽略点
     _emptyType: 0,
-    _reData: function () {
-        this._setDisableP(-1, -1);
-        this._setReplaceP(-1, -1);
-        this._cArry = [];
-        this._disablePointV = [];
-        this._disableValueV = [0];
-
-    },
     // 获取消除的数组
     getElArry: function (p) {
         var j = p.x;
@@ -314,16 +303,15 @@ var EliminateHelper = {
         this._map[p1.y][p1.x] = this._map[p2.y][p2.x];
         this._map[p2.y][p2.x] = value;
     },
-    debugLog: function () {
-        var map = this._map;
-        cc.log("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-        for (var m = 0; m < this._map.length; m++) {
-            var str = "[ ";
-            for (var n = 0; n < this._map[0].length; n++) {
-                str = str + map[m][n] + " , ";
-            }
-            console.log(str + "],");
-        }
-    }
-
+    //debugLog: function () {
+    //    var map = this._map;
+    //    cc.log("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+    //    for (var m = 0; m < this._map.length; m++) {
+    //        var str = "[ ";
+    //        for (var n = 0; n < this._map[0].length; n++) {
+    //            str = str + map[m][n] + " , ";
+    //        }
+    //        console.log(str + "],");
+    //    }
+    //}
 }
