@@ -51,7 +51,7 @@ var EliminateHelper = {
             for (var m = map.length - 1; m >= 0; m--) {
                 if (map[m][n] == this._emptyType) {
                     map[m][n] = this.getRandNum(1, 6);
-                    //map[m][n] = 1;
+                    // map[m][n] = 1;
                     arry.push(cc.p(n, m));
                 }
             }
@@ -303,15 +303,15 @@ var EliminateHelper = {
         this._map[p1.y][p1.x] = this._map[p2.y][p2.x];
         this._map[p2.y][p2.x] = value;
     },
-    //debugLog: function () {
-    //    var map = this._map;
-    //    cc.log("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-    //    for (var m = 0; m < this._map.length; m++) {
-    //        var str = "[ ";
-    //        for (var n = 0; n < this._map[0].length; n++) {
-    //            str = str + map[m][n] + " , ";
-    //        }
-    //        console.log(str + "],");
-    //    }
-    //}
+    debugLog: function () {
+        var map = this._map;
+        cc.log("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+        for (var m = 0; m < this._map.length; m++) {
+            var str = "[ ";
+            for (var n = 0; n < this._map[0].length; n++) {
+                str = str + map[m][n] + " , ";
+            }
+            console.log(str + "],");
+        }
+    }
 }

@@ -5,11 +5,10 @@ var HelloWorldLayer = cc.Layer.extend({
     mapOriginP: null,
     touchBeganP: null,
     cubeArry: [], // 保存方块
-    cubeMoveV: 45, // 块的下落速度
+    cubeMoveV: 450, // 块的下落速度
     swapCubeT: 0.4, // 交换速度
     ctor: function () {
         this._super();
-
         this.initData();
         this.initUI();
         this.addTouchListener();
@@ -17,7 +16,7 @@ var HelloWorldLayer = cc.Layer.extend({
     },
     initUI: function () {
         // 初始地图
-        //EliminateHelper.createRandMap();
+        EliminateHelper.createRandMap();
 
         for (var m = 0; m < this.mapSize.height; m++) {
             for (var n = 0; n < this.mapSize.width; n++) {
@@ -177,7 +176,6 @@ var HelloWorldLayer = cc.Layer.extend({
         }
     },
     swapCube: function (startP, endP) {
-
         // 先交换
         EliminateHelper.swapCube(startP, endP);
         // 没有可消除的，则换回来
@@ -196,28 +194,54 @@ var HelloWorldLayer = cc.Layer.extend({
         cube2.stopAllActions();
 
         cube1.runAction(cc.moveTo(this.swapCubeT, cube2P));
-        cube2.runAction(cc.sequence(
-            cc.moveTo(this.swapCubeT, cube1P),
-            cc.callFunc(function () {
-                this.eliminateCube(endP);
-                this.eliminateCube(startP);
-
-            }, this)));
-
+        cube2.runAction(cc.moveTo(this.swapCubeT, cube1P));
         this.swapCubeObject(startP, endP);
+
+        this.scheduleOnce(function () {
+            this.ecInterFace([startP, endP]);
+        }, this.swapCubeT);
+
+
     },
     ecInterFace: function (arry) {
+        if (arry.length < 1) {
+            return;
+        }
+        EliminateHelper.debugLog();
         // 消除
         for (var i = 0; i < arry.length; i++) {
             this.eliminateCube(arry[i]);
         }
-        // 下落
-        var maxTime = this.moveDownCube();
-        // 创建下落方块
-        var callfun = cc.callFunc(function (target, data) {
+        // 下落 maxTime 下落最大时间
+        var mdArry = EliminateHelper.moveDownCube();
+        var mMaxTime = this.moveDownCube(mdArry);
 
-        }, this);
-        this.runAction(cc.sequence(cc.delayTime(maxTime), callfun));
+        var cdArry = [];
+
+        var nCallfun = function (target, data) {
+            var arryV = [];
+            // 下落的
+            for (var i = 0; i < mdArry.length; i++) {
+                arryV.push(mdArry[i].endP);
+            }
+            // 生成的
+            for (var i = 0; i < cdArry.length; i++) {
+                var arry = cdArry[i];
+                for (var j = 0; j < arry.length; j++) {
+                    arryV.push(arry[j]);
+                }
+            }
+            this.ecInterFace(arryV);
+        }.bind(this);
+
+        // 创建下落方块
+        var downCallfun = function (target, data) {
+            cdArry = EliminateHelper.createDownCube();
+            var cMaxTimeM = this.createDownCube(cdArry);
+            this.scheduleOnce(nCallfun, cMaxTimeM);
+        }.bind(this);
+
+        this.scheduleOnce(downCallfun, mMaxTime);
 
     },
     // 消除
@@ -232,23 +256,14 @@ var HelloWorldLayer = cc.Layer.extend({
             var cube = this.getCubeSpByP(objP);
             cube.setVisible(false);
             cube.removeFromParent();
-            //cube.runAction(cc.sequence(cc.delayTime(0), cc.callFunc(function (target, data) {
-            //    data.removeFromParent();
-            //    this.moveDownCube();
-            //}, this, cube)));
         }
 
 
     },
-    moveDownCube: function () {
+    moveDownCube: function (mdArry) {
         //   EliminateHelper.debugLog();
         // 最大时间
         var maxTime = 0;
-        var mdArry = EliminateHelper.moveDownCube();
-        //if (mdArry.length == 0) {
-        //    //this.createDownCube();
-        //    return maxTime;
-        //}
 
         //console.log("cubeArry.length " + cubeArry.length + " mdArry.length " + mdArry.length + " p.x " + p.x + " p.y " + p.y);
         for (var i = 0; i < mdArry.length; i++) {
@@ -263,19 +278,14 @@ var HelloWorldLayer = cc.Layer.extend({
             if (time > maxTime) {
                 maxTime = time;
             }
-            cube.runAction(cc.sequence(
-                cc.moveTo(time, this.getScreenP(obj.endP)),
-                // cc.moveTo(this.getMoveTimeBS(cube.getPosition(), endScP), this.getScreenP(obj.endP)),
-                cc.callFunc(function (target, data) {
-                    //this.createDownCube();
-                    //this.eliminateCube(data);
-                }, this, obj.endP)));
+            cube.runAction(cc.moveTo(time, this.getScreenP(obj.endP)));
         }
         //EliminateHelper.debugLog();
         return maxTime;
     },
-    createDownCube: function () {
-        var mdArry = EliminateHelper.createDownCube();
+    createDownCube: function (mdArry) {
+        var maxTime = 0;
+        // var mdArry = EliminateHelper.createDownCube();
         for (var i = 0; i < mdArry.length; i++) {
             var arry = mdArry[i];
             for (var j = 0; j < arry.length; j++) {
@@ -286,15 +296,16 @@ var HelloWorldLayer = cc.Layer.extend({
                 var screenP = this.getScreenP(objP);
                 var beganP = cc.p(screenP.x, this.mapOriginP.y + (arry.length - objP.y) * this.cubeSize.height);
                 cube.setPosition(beganP);
-                var action = cc.moveTo(this.getMoveTimeBS(screenP, beganP), screenP);
+                var time = this.getMoveTimeBS(screenP, beganP);
+                if (time > maxTime) {
+                    maxTime = time;
+                }
                 cube.stopAllActions();
-                cube.runAction(cc.sequence(
-                    action, cc.callFunc(function (target, data) {
-                        this.createDownCube();
-                        this.eliminateCube(data);
-                    }, this, objP)));
+                cube.runAction(cc.moveTo(time, screenP));
+
             }
         }
+        return maxTime;
     },
     createCubeSp: function (index) {
         var cubeSp = new cc.Sprite(res["cube_png" + index]);
