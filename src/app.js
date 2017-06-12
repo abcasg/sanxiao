@@ -7,6 +7,7 @@ var HelloWorldLayer = cc.Layer.extend({
     cubeArry: [], // 保存方块
     cubeMoveV: 450, // 块的下落速度
     swapCubeT: 0.4, // 交换速度
+    isMoveFlag:false, // 动画运动中
     ctor: function () {
         this._super();
         this.initData();
@@ -16,7 +17,7 @@ var HelloWorldLayer = cc.Layer.extend({
     },
     initUI: function () {
         // 初始地图
-        EliminateHelper.createRandMap();
+        //EliminateHelper.createRandMap();
 
         for (var m = 0; m < this.mapSize.height; m++) {
             for (var n = 0; n < this.mapSize.width; n++) {
@@ -89,6 +90,10 @@ var HelloWorldLayer = cc.Layer.extend({
         var tag = event.getCurrentTarget();
         tag.touchBeganP = touch.getLocation();
 
+        // 在运动中
+        if(tag.isMoveFlag){
+            tag.touchBeganP = null;
+        }
         return true;
     },
     onTouchMoved: function (touch, event) {
@@ -193,11 +198,13 @@ var HelloWorldLayer = cc.Layer.extend({
         cube1.stopAllActions();
         cube2.stopAllActions();
 
+        this.isMoveFlag = true;
         cube1.runAction(cc.moveTo(this.swapCubeT, cube2P));
         cube2.runAction(cc.moveTo(this.swapCubeT, cube1P));
         this.swapCubeObject(startP, endP);
 
         this.scheduleOnce(function () {
+            this.isMoveFlag = false;
             this.ecInterFace([startP, endP]);
         }, this.swapCubeT);
 
@@ -231,6 +238,7 @@ var HelloWorldLayer = cc.Layer.extend({
                     arryV.push(arry[j]);
                 }
             }
+            this.isMoveFlag = false;
             this.ecInterFace(arryV);
         }.bind(this);
 
@@ -241,6 +249,7 @@ var HelloWorldLayer = cc.Layer.extend({
             this.scheduleOnce(nCallfun, cMaxTimeM);
         }.bind(this);
 
+        this.isMoveFlag = true;
         this.scheduleOnce(downCallfun, mMaxTime);
 
     },
