@@ -60,7 +60,7 @@ cc.game.onStart = function () {
     //cc.view.enableRetina(cc.sys.os === cc.sys.OS_IOS ? true : false);
     cc.view.enableRetina(true);
     cc.view.enableAutoFullScreen(true);
-    
+
     // Adjust viewport meta
     cc.view.adjustViewPort(true);
 
