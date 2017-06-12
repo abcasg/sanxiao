@@ -1,6 +1,8 @@
 var res = {
+    bg_png: "res/bg.png",
+    cubebg_png: "res/cubebg.png"
 };
-for(var i = 1;i<=6;i++){
+for (var i = 1; i <= 6; i++) {
     res["cube_png" + i] = "res/cube" + i + ".png";
 }
 var g_resources = [];

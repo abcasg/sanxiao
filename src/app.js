@@ -7,7 +7,8 @@ var HelloWorldLayer = cc.Layer.extend({
     cubeArry: [], // 保存方块
     cubeMoveV: 450, // 块的下落速度
     swapCubeT: 0.4, // 交换速度
-    isMoveFlag:false, // 动画运动中
+    isMoveFlag: false, // 动画运动中
+    cubeLayer:null,
     ctor: function () {
         this._super();
         this.initData();
@@ -16,23 +17,42 @@ var HelloWorldLayer = cc.Layer.extend({
         return true;
     },
     initUI: function () {
+        var bg = new cc.Sprite(res.bg_png);
+        bg.setPosition(cc.p(cc.winSize.width / 2, cc.winSize.height / 2));
+        this.addChild(bg, 0);
+
+        var bgLayer = new cc.Layer();
+        for (var m = 0; m < this.mapSize.height; m++) {
+            for (var n = 0; n < this.mapSize.width; n++) {
+                var cubebg = new cc.Sprite(res.cubebg_png);
+                cubebg.setPositionX(this.mapOriginP.x + n * this.cubeSize.width);
+                cubebg.setPositionY(this.mapOriginP.y - m * this.cubeSize.height);
+                bgLayer.addChild(cubebg, 1);
+            }
+        }
+        this.addChild(bgLayer, 1);
+
         // 初始地图
-        //EliminateHelper.createRandMap();
+        EliminateHelper.createRandMap();
+
+        var cubeLayer = new cc.Layer();
+        this.cubeLayer = cubeLayer;
 
         for (var m = 0; m < this.mapSize.height; m++) {
             for (var n = 0; n < this.mapSize.width; n++) {
                 var cubeSp = this.createCubeSp(Map[m][n]);
                 cubeSp.setPositionX(this.mapOriginP.x + n * this.cubeSize.width);
                 cubeSp.setPositionY(this.mapOriginP.y - m * this.cubeSize.height);
-                this.addChild(cubeSp);
+               // cubeLayer.addChild(cubeSp, 1);
 
                 if (Map[m][n] == 0) {
                     cubeSp.setVisible(false);
                 }
                 this.cubeArry.push(cubeSp);
-
             }
         }
+        this.addChild(cubeLayer, 2);
+
     },
     initData: function () {
         this.cubeSize = cc.size(71, 71);
@@ -91,7 +111,7 @@ var HelloWorldLayer = cc.Layer.extend({
         tag.touchBeganP = touch.getLocation();
 
         // 在运动中
-        if(tag.isMoveFlag){
+        if (tag.isMoveFlag) {
             tag.touchBeganP = null;
         }
         return true;
@@ -301,7 +321,7 @@ var HelloWorldLayer = cc.Layer.extend({
                 var objP = arry[j];
                 var cube = this.createCubeSp(Map[objP.y][objP.x]);
                 this.setCubeSpByP(objP, cube);
-                this.addChild(cube);
+                //this.addChild(cube);
                 var screenP = this.getScreenP(objP);
                 var beganP = cc.p(screenP.x, this.mapOriginP.y + (arry.length - objP.y) * this.cubeSize.height);
                 cube.setPosition(beganP);
@@ -321,7 +341,7 @@ var HelloWorldLayer = cc.Layer.extend({
         var label = cc.LabelTTF.create("" + index, "Arial", 40);
         label.setColor(cc.color(0, 0, 0));
         label.setPosition(cc.p(this.cubeSize.width / 2, this.cubeSize.height / 2));
-        cubeSp.addChild(label);
+        this.cubeLayer.addChild(cubeSp);
 
         return cubeSp;
     }
