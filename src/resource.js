@@ -1,5 +1,4 @@
 var res = {
-    //HelloWorld_png : "res/HelloWorld.png",
 };
 for(var i = 1;i<=6;i++){
     res["cube_png" + i] = "res/cube" + i + ".png";
