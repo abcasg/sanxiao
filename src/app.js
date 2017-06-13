@@ -5,10 +5,10 @@ var HelloWorldLayer = cc.Layer.extend({
     mapOriginP: null,
     touchBeganP: null,
     cubeArry: [], // 保存方块
-    cubeMoveV: 450, // 块的下落速度
+    cubeMoveV: 350, // 块的下落速度
     swapCubeT: 0.4, // 交换速度
     isMoveFlag: false, // 动画运动中
-    cubeLayer:null,
+    cubeLayer: null,
     ctor: function () {
         this._super();
         this.initData();
@@ -43,7 +43,7 @@ var HelloWorldLayer = cc.Layer.extend({
                 var cubeSp = this.createCubeSp(Map[m][n]);
                 cubeSp.setPositionX(this.mapOriginP.x + n * this.cubeSize.width);
                 cubeSp.setPositionY(this.mapOriginP.y - m * this.cubeSize.height);
-               // cubeLayer.addChild(cubeSp, 1);
+                // cubeLayer.addChild(cubeSp, 1);
 
                 if (Map[m][n] == 0) {
                     cubeSp.setVisible(false);
@@ -55,7 +55,7 @@ var HelloWorldLayer = cc.Layer.extend({
 
     },
     initData: function () {
-        this.cubeSize = cc.size(71, 71);
+        this.cubeSize = cc.size(35, 35);
         this.mapSize = cc.size(Map[0].length, Map.length);
 
         var centerP = cc.p(cc.winSize.width / 2, cc.winSize.height / 2);
@@ -342,10 +342,12 @@ var HelloWorldLayer = cc.Layer.extend({
         label.setColor(cc.color(0, 0, 0));
         label.setPosition(cc.p(this.cubeSize.width / 2, this.cubeSize.height / 2));
         this.cubeLayer.addChild(cubeSp);
+        var box = cubeSp.getBoundingBox();
+        cubeSp.setScaleX(this.cubeSize.width / box.width);
+        cubeSp.setScaleY(this.cubeSize.height / box.height);
 
         return cubeSp;
     }
-
 });
 
 
