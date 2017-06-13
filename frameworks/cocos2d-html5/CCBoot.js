@@ -2589,6 +2589,7 @@ cc.game = /** @lends cc.game# */{
                     txt = cc.loader._loadTxtSync("project.json");
                 }
                 data = JSON.parse(txt);
+
             } catch (e) {
                 cc.log("Failed to read or parse project.json");
             }
