@@ -20,6 +20,7 @@ var EliminateHelper = {
     _disablePointV: [], // 不可用的点
     _disableValueV: [0], // 不可用的值
     _emptyType: 0,
+    _eliminateType: {"El3": 0, "El4": 1, "ElTian": 2, "ElL": 3, "ElT": 4, "El5": 5}, // 消除类型 //直线5消>T字消>L字消>田字消>直线4消>3消
     // 获取消除的数组
     getElArry: function (p) {
         var j = p.x;
