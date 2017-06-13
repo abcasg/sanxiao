@@ -5,7 +5,7 @@ var HelloWorldLayer = cc.Layer.extend({
     mapOriginP: null,
     touchBeganP: null,
     cubeArry: [], // 保存方块
-    cubeMoveV: 350, // 块的下落速度
+    cubeMoveV: 250, // 块的下落速度
     swapCubeT: 0.4, // 交换速度
     isMoveFlag: false, // 动画运动中
     cubeLayer: null,
@@ -33,7 +33,7 @@ var HelloWorldLayer = cc.Layer.extend({
         this.addChild(bgLayer, 1);
 
         // 初始地图
-        EliminateHelper.createRandMap();
+        //EliminateHelper.createRandMap();
 
         var cubeLayer = new cc.Layer();
         this.cubeLayer = cubeLayer;
