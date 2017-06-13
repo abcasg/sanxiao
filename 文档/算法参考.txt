@@ -1,0 +1,242 @@
+//找到所有要消除的糖果对象
+Vector<GameObject*> GameManage::getShapeCrashObjects()
+{
+	Vector<GameObject*> ret;
+	Size size = getLayerSize();
+	for (int j = 0; j < size.height; j++)
+	{
+		for (int i = 0; i < size.width; i++)
+		{
+			GameObject* srcObject = getObjectOf(Vec2(i, j));
+			if (srcObject&&srcObject->isCrashRuleEnable()) {
+				Vector<GameObject*> tmpVec = getCrashObjectsOf(srcObject);
+				for (auto item : tmpVec)
+				{
+					if (!ret.contains(item))
+						ret.pushBack(item);
+				}
+			}
+
+		}
+	}
+
+	return ret;
+}
+
+
+Vector<GameObject*> GameManage::getCrashObjectsOf(GameObject* srcObject, Vec2 offset /*= Vec2(1,1)*/)
+{
+	Vector<GameObject*> ret;
+	Vector<GameObject*> tmpVec;
+
+	CCAssert(srcObject != nullptr, "");
+	Size chessSize = getLayerSize();
+	const Vec2 startPos = srcObject->getPos();
+
+	//横向
+	for (Vec2 pos = startPos + Vec2(offset.x, 0); pos.x >= 0 && pos.x < chessSize.width; pos.x += offset.x)
+	{
+		GameObject* tmp = getObjectOf(pos);
+		if (tmp&&tmp->isCrashRuleEnable() && srcObject->isSimilar(tmp)) {
+			tmpVec.pushBack(tmp);
+		}
+		else
+			break;
+	}
+	if (tmpVec.size() >= 2)
+		ret.pushBack(tmpVec);
+
+	//纵向
+	tmpVec.clear();
+	for (Vec2 pos = startPos + Vec2(0, offset.y); pos.y >= 0 && pos.y < chessSize.height; pos.y += offset.y)
+	{
+		GameObject* tmp = getObjectOf(pos);
+		if (tmp&&tmp->isCrashRuleEnable() && srcObject->isSimilar(tmp)) {
+			tmpVec.pushBack(tmp);
+		}
+		else
+			break;
+	}
+	if (tmpVec.size() >= 2)
+		ret.pushBack(tmpVec);
+
+	//田字
+	tmpVec.clear();
+	const int len = 3;
+	Vec2 square[len] = { Vec2(0,1),Vec2(1,1),Vec2(1,0) };
+	for (int i = 0; i < len; i++)
+	{
+		GameObject* tmp = getObjectOf(startPos + square[i]);
+		if (tmp&&tmp->isCrashRuleEnable() && srcObject->isSimilar(tmp)) {
+			tmpVec.pushBack(tmp);
+		}
+		else
+			break;
+	}
+	if (tmpVec.size() == len) {
+		for (auto item : tmpVec)
+		{
+			if (!ret.contains(item))
+				ret.pushBack(item);
+		}
+	}
+	if (ret.size() > 0 && !ret.contains(srcObject))
+		ret.pushBack(srcObject);
+	return ret;
+}
+
+int GameManage::checkEffectType(const Vector<GameObject*>& targets)
+{
+	int ret = CRASH_EFECT_NULL;
+	do
+	{
+		if (targets.size() <= 3)
+			break;
+		//直线5消>T字消>L字消>田字消>直线4消
+		if (_isEffectRainbow(targets))
+			return CRASH_EFFECT_RAINBOW;
+		else if (_isEffectT(targets))
+			return CRASH_EFFECT_T;
+		else if (_isEffectL(targets))
+			return CRASH_EFFECT_L;
+		else if (_isEffectTian(targets))
+			return CRASH_EFFECT_TIAN;
+		else if (_isEffectLine(targets))
+			return CRASH_EFFECT_LINE;
+
+	} while (0);
+
+	return ret;
+}
+
+bool GameManage::_isEffectRainbow(const Vector<GameObject*>& targets)
+{
+	if (targets.size() < 5)
+		return false;
+
+	for (int i = 0; i < targets.size(); i++)
+	{
+		int sameX = 0, sameY = 0;
+		GameObject* src = targets.at(i);
+		for (auto item : targets)
+		{
+			if (src == item)
+				continue;
+			if (src->getPosX() == item->getPosX())
+				sameX++;
+			else if (src->getPosY() == item->getPosY())
+				sameY++;
+		}
+		if (sameX >= 4 || sameY >= 4)
+			return true;
+	}
+	return false;
+}
+
+bool GameManage::_isEffectLine(const Vector<GameObject*>& targets)
+{
+	if (targets.size() < 4)
+		return false;
+
+	for (int i = 0; i < targets.size(); i++)
+	{
+		int sameX = 0, sameY = 0;
+		GameObject* src = targets.at(i);
+		for (auto item : targets)
+		{
+			if (src == item)
+				continue;
+			if (src->getPosX() == item->getPosX())
+				sameX++;
+			else if (src->getPosY() == item->getPosY())
+				sameY++;
+		}
+		if (sameX >= (3) || sameY >= (3))
+			return true;
+	}
+	return false;
+}
+
+bool GameManage::_isEffectTian(const Vector<GameObject*>& targets)
+{
+	const int len = 3;
+	Vec2 square[len] = { Vec2(0,1),Vec2(1,1),Vec2(1,0) };
+
+	for (auto srcItem : targets)//寻找田字格
+	{
+		Vector<GameObject*> tmpVec;
+		for (int i = 0; i < len; i++)
+		{
+			GameObject* tmp = getObjectOf(srcItem->getPos() + square[i]);
+			if (tmp&&targets.contains(tmp)) {
+				tmpVec.pushBack(tmp);
+			}
+			else
+				break;
+		}
+		if (tmpVec.size() == len) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
+bool GameManage::_isEffectL(const Vector<GameObject*>& targets)
+{
+	if (targets.size() < 5)
+		return false;
+	for (Vector<GameObject*>::const_iterator it = targets.begin(); it != targets.end(); ++it) {
+		GameObject* startObj = *it;
+		int num = 0;
+		Vec2 group[4] = { Vec2(0,1),Vec2(0,-1),Vec2(1,0),Vec2(-1,0) };
+		for (int i = 0; i < 4; i++)
+		{
+			GameObject* gameObj = getObjectOf(startObj->getPos() + group[i]);
+			GameObject* gameObj1 = getObjectOf(startObj->getPos() + group[i] + group[i]);
+
+			if (gameObj&&targets.contains(gameObj)
+				&& gameObj1&&targets.contains(gameObj1))
+				num++;
+		}
+		if (num == 2)
+			return true;
+	}
+	return false;
+}
+
+bool GameManage::_isEffectT(const Vector<GameObject*>& targets)
+{
+	//找到交叉点,交叉点周围有三个以上相邻点就算T消
+	if (targets.size() < 5)
+		return false;
+
+	for (auto startObj : targets)
+	{
+		//	PointArray* pointArr = PointArray::create(4);
+		vector<Vec2> pointArr;
+		Vec2 group[4] = { Vec2(0,1),Vec2(0,-1),Vec2(1,0),Vec2(-1,0) };
+		for (int i = 0; i < 4; i++)
+		{
+			GameObject* gameObj = getObjectOf(startObj->getPos() + group[i]);
+
+			if (gameObj&&targets.contains(gameObj)) {
+				pointArr.push_back(group[i]);
+			}
+		}
+		if (pointArr.size() == 4)
+			return true;
+		if (pointArr.size() == 3) {
+			Vec2 sumPoint;
+			for (vector<Vec2>::size_type i = 0; i < pointArr.size(); i++)
+			{
+				sumPoint += pointArr[i];
+			}
+			GameObject* gameObj1 = getObjectOf(startObj->getPos() + sumPoint + sumPoint);
+			if (gameObj1&&targets.contains(gameObj1))
+				return true;
+		}
+	}
+
+	return false;
+}
