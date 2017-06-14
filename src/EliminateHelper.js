@@ -5,16 +5,16 @@
 var EliminateHelper = {
     _replaceP: {"i": -1, "j": -1}, // 检测代替点
     _directionP: [
-        {"di": -1, "dj": 0}, // 下
-        {"di": 1, "dj": 0},  // 上
-        {"di": 0, "dj": 1},  // 右
-        {"di": 0, "dj": -1}  // 左
+        cc.p(0, -1), // 上
+        cc.p(0, 1),  // 下
+        cc.p(1, 0),  // 右
+        cc.p(-1, 0)  // 左
     ],
     _directionDP: [
-        [{"di": 0, "dj": -1}, {"di": 0, "dj": -2}],  // 左
-        [{"di": 0, "dj": 1}, {"di": 0, "dj": 2}],  // 右
-        [{"di": -1, "dj": 0}, {"di": -2, "dj": 0}],  // 上
-        [{"di": 1, "dj": 0}, {"di": 2, "dj": 0}]  // 下
+        [cc.p(-1, 0), cc.p(-2, 0)],  // 左
+        [cc.p(1, 0), cc.p(2, 0)],  // 右
+        [cc.p(0, -1), cc.p(0, -2)],  // 上
+        [cc.p(0, 1), cc.p(0, 2)]  // 下
     ],
     _map: Map,
     _disablePointV: [], // 不可用的点
@@ -129,8 +129,7 @@ var EliminateHelper = {
         var cP = cc.p(j, i);
 
         for (var n = 0; n < this._directionP.length; n++) {
-            var dp = this._directionP[n];
-            var dPoint = cc.p(j + dp.dj, i + dp.di);
+            var dPoint = this._directionP[n];
             if (this._checkP(dPoint)) {
                 // 先交换值
                 this._swapPValue(dPoint, cP);
@@ -190,13 +189,16 @@ var EliminateHelper = {
         // 比较上下左右 两个点的值
         for (var m = bIndex; m < this._directionDP.length; m++) {
             var objP = this._directionDP[m];
-            var objP0 = cc.p(objP[0].dj + j, objP[0].di + i);
-            var objP1 = cc.p(objP[1].dj + j, objP[1].di + i);
+            //var objP0 = cc.p(objP[0].dj + j, objP[0].di + i);
+            //var objP1 = cc.p(objP[1].dj + j, objP[1].di + i);
+
+            var objP0 = cc.p(objP[0].x + j, objP[0].y + i);
+            var objP1 = cc.p(objP[1].x + j, objP[1].y + i);
 
             // map[i + objP0.di][j + objP0.dj]
             if (this._checkP(objP0) && this._checkP(objP1)) {
                 if (this._compareMapValue(cP, objP0) && this._compareMapValue(cP, objP1)) {
-                    this.pushArryUnique(cArry, cc.p(objP[0].dj, objP[0].di));
+                    this.pushArryUnique(cArry, cc.p(objP[0].x, objP[0].y));
                 }
             }
         }
