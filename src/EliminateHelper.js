@@ -10,17 +10,36 @@ var EliminateHelper = {
         cc.p(1, 0),  // 右
         cc.p(-1, 0)  // 左
     ],
+    _dType: [
+        "Up", // 上
+        "Down",  // 下
+        "Right",  // 右
+        "Left"  // 左
+    ],
+    _directionOblP: [
+        cc.p(-1, -1), // 上左
+        cc.p(-1, 1),  // 下左
+        cc.p(1, -1),  // 上右
+        cc.p(1, 1)    // 下右
+    ],
+    _dOblType: [
+        "UpLeft",   // 上左
+        "DownLeft", // 下左
+        "UpRight", // 上右
+        "DownRight"  // 下右
+    ],
     _directionDP: [
-        [cc.p(-1, 0), cc.p(-2, 0)],  // 左
-        [cc.p(1, 0), cc.p(2, 0)],  // 右
         [cc.p(0, -1), cc.p(0, -2)],  // 上
-        [cc.p(0, 1), cc.p(0, 2)]  // 下
+        [cc.p(0, 1), cc.p(0, 2)],  // 下
+        [cc.p(1, 0), cc.p(2, 0)],  // 右
+        [cc.p(-1, 0), cc.p(-2, 0)],  // 左
+
     ],
     _map: Map,
     _disablePointV: [], // 不可用的点
     _disableValueV: [0], // 不可用的值
     _emptyType: 0,
-    _eliminateType: {"El3": 0, "El4": 1, "ElTian": 2, "ElL": 3, "ElT": 4, "El5": 5}, // 消除类型 //直线5消>T字消>L字消>田字消>直线4消>3消
+    _eliminateType: {"None": -1, "El3": 0, "El4": 1, "ElTian": 2, "ElL": 3, "ElT": 4, "El5": 5}, // 消除类型 //直线5消>T字消>L字消>田字消>直线4消>3消
     // 获取消除的数组
     getElArry: function (p) {
         var j = p.x;
@@ -36,7 +55,7 @@ var EliminateHelper = {
             for (var n = 0; n < cTypeArry.length; n++) {
                 var dp = cTypeArry[n];
                 var dPoint = cc.p(j + dp.x, i + dp.y);
-                this._searchEArry(dPoint, dp, value, cubeArry);
+                this._searchEArryM(dPoint, dp, value, cubeArry);
             }
         }
         this.setMapEmptyCube(cubeArry);
@@ -99,7 +118,7 @@ var EliminateHelper = {
             this._map[objP.y][objP.x] = this._emptyType;
         }
     },
-    _searchEArry: function (p, dp, value, cArry) {
+    _searchEArryM: function (p, dp, value, cArry) {
         if (!this._checkP(p)) {
             return;
         }
@@ -109,7 +128,24 @@ var EliminateHelper = {
             return;
         }
         var nextP = cc.p(p.x + dp.x, p.y + dp.y);
-        this._searchEArry(nextP, dp, value, cArry);
+        this._searchEArryM(nextP, dp, value, cArry);
+    },
+
+    _searchEArry: function (p, dp, value, cArry, findN) {
+        if (findN && cArry.length >= findN) {
+            return;
+        }
+
+        if (!this._checkP(p)) {
+            return;
+        }
+        if (value == this._map[p.y][p.x]) {
+            cArry.push(p);
+        } else {
+            return;
+        }
+        var nextP = cc.p(p.x + dp.x, p.y + dp.y);
+        this._searchEArry(nextP, dp, value, cArry,findN);
     },
 
     // 是否有可消除
@@ -170,7 +206,7 @@ var EliminateHelper = {
             if (this._compareMapValue(cP, pLeft) && this._compareMapValue(cP, pRight)) {
                 this.pushArryUnique(cArry, cc.p(-1, 0));
                 this.pushArryUnique(cArry, cc.p(1, 0));
-                bIndex = 2;
+                // bIndex = 2;
             }
         }
 
@@ -182,20 +218,16 @@ var EliminateHelper = {
             if (this._compareMapValue(cP, pUp) && this._compareMapValue(cP, pDown)) {
                 this.pushArryUnique(cArry, cc.p(0, 1));
                 this.pushArryUnique(cArry, cc.p(0, -1));
-                bIndex = this._directionDP.length;
+                // bIndex = this._directionDP.length;
             }
         }
 
         // 比较上下左右 两个点的值
         for (var m = bIndex; m < this._directionDP.length; m++) {
             var objP = this._directionDP[m];
-            //var objP0 = cc.p(objP[0].dj + j, objP[0].di + i);
-            //var objP1 = cc.p(objP[1].dj + j, objP[1].di + i);
-
             var objP0 = cc.p(objP[0].x + j, objP[0].y + i);
             var objP1 = cc.p(objP[1].x + j, objP[1].y + i);
 
-            // map[i + objP0.di][j + objP0.dj]
             if (this._checkP(objP0) && this._checkP(objP1)) {
                 if (this._compareMapValue(cP, objP0) && this._compareMapValue(cP, objP1)) {
                     this.pushArryUnique(cArry, cc.p(objP[0].x, objP[0].y));
@@ -204,6 +236,142 @@ var EliminateHelper = {
         }
         return cArry;
     },
+    _getEliType: function (p) {
+
+        //直线5消>T字消>L字消>田字消>直线4消
+        var value = this._map[p.y][p.x];
+
+        var near1Dobj = this._getNear(p, 1);
+        var near2Dobj = this._getNear(p, 2);
+        var near1OblDobj = this._getNearOblique(p, 1);
+
+        if (this._isEffectRainbow(p, value)) {
+            return this._eliminateType.El5;
+        }
+        if (this._isEffectT(near1Dobj, near2Dobj)) {
+            return this._eliminateType.ElT;
+        }
+        if (this._isEffectL(near1Dobj, near2Dobj)) {
+            return this._eliminateType.ElL;
+        }
+        if (this._isEffectTian(near1Dobj, near1OblDobj)) {
+            return this._eliminateType.ElTian;
+        }
+        if (this._isEffectLine(near1Dobj, near2Dobj)) {
+            return this._eliminateType.El3;
+        }
+        return this._eliminateType.None;
+    },
+    _isEffectRainbow: function (p, value) {
+        // 直线5消
+        var dObj = {};
+        // 找到四个方向的长度
+        for (var i = 0; i < this._directionP.length; i++) {
+            var arry = [];
+            var objP = this._directionP[i];
+            this._searchEArry(cc.p(p.x + objP.x, p.y + objP.y), objP, value, arry, null);
+            dObj[this._dType[i]] = arry.length;
+        }
+        // 竖
+        if (dObj.Up + dObj.Down + 1 >= 5) {
+            return true;
+        }
+        // 横
+        if (dObj.Left + dObj.Right + 1 >= 5) {
+            return true;
+        }
+        return false;
+    },
+    _isEffectT: function (near1Dobj, near2Dobj) {
+        // 上下T
+        if (near1Dobj.Left && near1Dobj.Right) {
+            if (near2Dobj.Up || near2Dobj.Down) {
+                return true;
+            }
+        }
+        // 左右T
+        if (near1Dobj.Up && near1Dobj.Down) {
+            if (near2Dobj.Left || near2Dobj.Right) {
+                return true;
+            }
+        }
+        return false;
+
+    },
+    _isEffectL: function (near1Dobj, near2Dobj) {
+        if (near1Dobj.Left && near2Dobj.Up) {
+            return true;
+        }
+        if (near1Dobj.Right && near2Dobj.Up) {
+            return true;
+        }
+        if (near1Dobj.Left && near2Dobj.Down) {
+            return true;
+        }
+        if (near1Dobj.Right && near2Dobj.Down) {
+            return true;
+        }
+        return false;
+    },
+    _isEffectTian: function (near1Dobj, near1OblDobj) {
+        if (near1Dobj.Up && near1Dobj.Left && near1OblDobj.UpLeft) {
+            return true;
+        }
+        if (near1Dobj.Up && near1Dobj.Right && near1OblDobj.UpRight) {
+            return true;
+        }
+        if (near1Dobj.Down && near1Dobj.Left && near1OblDobj.DownLeft) {
+            return true;
+        }
+        if (near1Dobj.Down && near1Dobj.Right && near1OblDobj.DownRight) {
+            return true;
+        }
+        return false;
+    },
+    _isEffectLine: function (near1Dobj, near2Dobj) {
+        // 横
+        if (near1Dobj.Left && near1Dobj.Right) {
+            return true;
+        }
+        // 竖
+        if (near1Dobj.Up && near1Dobj.Down) {
+            return true;
+        }
+        if (near2Dobj.Up || near2Dobj.Down || near2Dobj.Left || near2Dobj.Right) {
+            return true;
+        }
+        return false;
+    },
+    _getNear: function (p, nearN) {
+        var value = this._map[p.y][p.x]
+
+        // 上下右左
+        var dObj = {};
+        for (var i = 0; i < this._directionP.length; i++) {
+            var arry = [];
+            var objP = this._directionP[i];
+            this._searchEArry(cc.p(p.x + objP.x, p.y + objP.y), objP, value, arry, nearN);
+            if (nearN == arry.length) {
+                dObj[this._dType[i]] = true;
+            }
+        }
+        return dObj;
+    },
+    _getNearOblique: function (p, nearN) {
+        var value = this._map[p.y][p.x]
+        // 上左 // 下左// 上右 // 下右
+        var dObj = {};
+        for (var i = 0; i < this._directionOblP.length; i++) {
+            var arry = [];
+            var objP = this._directionOblP[i];
+            this._searchEArry(cc.p(p.x + objP.x, p.y + objP.y), objP, value, arry, nearN);
+            if (nearN == arry.length) {
+                dObj[this._dOblType[i]] = true;
+            }
+        }
+        return dObj;
+    },
+
     // 不重复添加到数组
     pushArryUnique: function (carry, p) {
         for (var i = 0; i < carry.length; i++) {

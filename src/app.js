@@ -34,6 +34,7 @@ var HelloWorldLayer = cc.Layer.extend({
 
         // 初始地图
         //EliminateHelper.createRandMap();
+        var tty = EliminateHelper._getEliType(cc.p(2,2));
 
         var cubeLayer = new cc.Layer();
         this.cubeLayer = cubeLayer;
