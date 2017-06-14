@@ -76,7 +76,7 @@ var EliminateHelper = {
             var arry = [];
             for (var m = map.length - 1; m >= 0; m--) {
                 if (map[m][n] == this._emptyType) {
-                    map[m][n] = this.getRandNum(1, 6);
+                    map[m][n] = this.getRandNum(1, 5);
                     //map[m][n] = 4;
                     arry.push(cc.p(n, m));
                 }
@@ -431,9 +431,9 @@ var EliminateHelper = {
         for (var m = 0; m < this._map.length; m++) {
             for (var n = 0; n < this._map[0].length; n++) {
                 while (true) {
-                    var randnum = this.getRandNum(1, 6);
-                    // this._map[m][n] = randnum;
-                    this._map[m][n] = 4;
+                    var randnum = this.getRandNum(1, 5);
+                    this._map[m][n] = randnum;
+                    //this._map[m][n] = 4;
                     if (!this.isEliminate(cc.p(n, m))) {
                         break;
                     }

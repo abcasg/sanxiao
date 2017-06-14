@@ -9,7 +9,7 @@
     "renderMode" : 0,
     "engineDir":"frameworks/cocos2d-html5",
 
-    "modules" : ["core","actions"],
+    "modules" : ["core","actions","spine"],
 
     "jsList" : [
         "src/resource.js",

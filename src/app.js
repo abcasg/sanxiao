@@ -17,24 +17,34 @@ var HelloWorldLayer = cc.Layer.extend({
         return true;
     },
     initUI: function () {
-        var bg = new cc.Sprite(res.bg_png);
-        bg.setPosition(cc.p(cc.winSize.width / 2, cc.winSize.height / 2));
-        this.addChild(bg, 0);
+        var bj2 = new cc.Sprite(res.bj02_png);
+        bj2.setAnchorPoint(cc.p(0, 1));
+        bj2.setPosition(cc.p(0, cc.winSize.height));
+        this.addChild(bj2, 1);
 
-        var bgLayer = new cc.Layer();
-        for (var m = 0; m < this.mapSize.height; m++) {
-            for (var n = 0; n < this.mapSize.width; n++) {
-                var cubebg = new cc.Sprite(res.cubebg_png);
-                cubebg.setPositionX(this.mapOriginP.x + n * this.cubeSize.width);
-                cubebg.setPositionY(this.mapOriginP.y - m * this.cubeSize.height);
-                bgLayer.addChild(cubebg, 1);
-            }
-        }
-        this.addChild(bgLayer, 1);
+        var bj1 = new cc.Sprite(res.bj01_png);
+        bj1.setAnchorPoint(cc.p(0, 0));
+        bj1.setPosition(cc.p(0, 0));
+        this.addChild(bj1, 4);
+
+        var spine = new sp.SkeletonAnimation('res/leopard/leopard_ani.json', 'res/leopard/leopard_ani.atlas');
+        spine.setAnimation(0, 'action_1', true);
+        spine.setPosition(cc.p(cc.winSize.width / 2, cc.winSize.height / 2));
+        //this.addChild(spine,7);
+        //var bgLayer = new cc.Layer();
+        //for (var m = 0; m < this.mapSize.height; m++) {
+        //    for (var n = 0; n < this.mapSize.width; n++) {
+        //        var cubebg = new cc.Sprite(res.cubebg_png);
+        //        cubebg.setPositionX(this.mapOriginP.x + n * this.cubeSize.width);
+        //        cubebg.setPositionY(this.mapOriginP.y - m * this.cubeSize.height);
+        //        bgLayer.addChild(cubebg, 1);
+        //    }
+        //}
+        //this.addChild(bgLayer, 1);
 
         // 初始地图
-        //EliminateHelper.createRandMap();
-        var tty = EliminateHelper._getEliType(cc.p(2,2));
+        EliminateHelper.createRandMap();
+        //var tty = EliminateHelper._getEliType(cc.p(2, 2));
 
         var cubeLayer = new cc.Layer();
         this.cubeLayer = cubeLayer;
@@ -52,28 +62,29 @@ var HelloWorldLayer = cc.Layer.extend({
                 this.cubeArry.push(cubeSp);
             }
         }
-        this.addChild(cubeLayer, 2);
+        this.addChild(cubeLayer, 6);
 
     },
     initData: function () {
-        this.cubeSize = cc.size(35, 35);
+        this.cubeSize = cc.size(38, 38);
         this.mapSize = cc.size(Map[0].length, Map.length);
 
-        var centerP = cc.p(cc.winSize.width / 2, cc.winSize.height / 2);
+        //var centerP = cc.p(cc.winSize.width / 2, cc.winSize.height / 2);
+        //
+        //var offsetP = cc.p(0, 0);
+        //if (this.mapSize.width % 2 == 0) {
+        //    offsetP.x = 0.5;
+        //}
+        //if (this.mapSize.height % 2 == 0) {
+        //    offsetP.y = 0.5;
+        //}
+        //
+        //
+        //var mapOriginPx = centerP.x - (this.mapSize.width / 2 - offsetP.x) * this.cubeSize.width;
+        //var mapOriginPy = centerP.y + (this.mapSize.height / 2 - offsetP.y) * this.cubeSize.height;
 
-        var offsetP = cc.p(0, 0);
-        if (this.mapSize.width % 2 == 0) {
-            offsetP.x = 0.5;
-        }
-        if (this.mapSize.height % 2 == 0) {
-            offsetP.y = 0.5;
-        }
-
-
-        var mapOriginPx = centerP.x - (this.mapSize.width / 2 - offsetP.x) * this.cubeSize.width;
-        var mapOriginPy = centerP.y + (this.mapSize.height / 2 - offsetP.y) * this.cubeSize.height;
-
-        this.mapOriginP = cc.p(mapOriginPx, mapOriginPy);
+        //this.mapOriginP = cc.p(mapOriginPx, mapOriginPy);
+        this.mapOriginP = cc.p(27, 303);
 
     },
     // 获取逻辑坐标
@@ -337,7 +348,7 @@ var HelloWorldLayer = cc.Layer.extend({
         return maxTime;
     },
     createCubeSp: function (index) {
-        var cubeSp = new cc.Sprite(res["cube_png" + index]);
+        var cubeSp = new cc.Sprite(res["fruit" + index + "1"]);
         var label = cc.LabelTTF.create("" + index, "Arial", 40);
         label.setColor(cc.color(0, 0, 0));
         label.setPosition(cc.p(this.cubeSize.width / 2, this.cubeSize.height / 2));
