@@ -294,7 +294,6 @@ var HelloWorldLayer = cc.Layer.extend({
         //   EliminateHelper.debugLog();
         // 最大时间
         var maxTime = 0;
-
         //console.log("cubeArry.length " + cubeArry.length + " mdArry.length " + mdArry.length + " p.x " + p.x + " p.y " + p.y);
         for (var i = 0; i < mdArry.length; i++) {
             var obj = mdArry[i];

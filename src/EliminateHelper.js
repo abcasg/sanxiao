@@ -42,21 +42,27 @@ var EliminateHelper = {
     _eliminateType: {"None": -1, "El3": 0, "El4": 1, "ElTian": 2, "ElL": 3, "ElT": 4, "El5": 5}, // 消除类型 //直线5消>T字消>L字消>田字消>直线4消>3消
     // 获取消除的数组
     getElArry: function (p) {
-        var j = p.x;
-        var i = p.y;
         var cubeArry = [];
-        var value = this._map[i][j];
+        var value = this._map[p.y][p.x];
         if (this._emptyType == value) {
             return cubeArry;
         }
-        var cTypeArry = this._isEliminateType(p);
-        if (cTypeArry.length > 0) {
-            cubeArry.push(cc.p(j, i))
-            for (var n = 0; n < cTypeArry.length; n++) {
-                var dp = cTypeArry[n];
-                var dPoint = cc.p(j + dp.x, i + dp.y);
-                this._searchEArryM(dPoint, dp, value, cubeArry);
+        if (this.isEliminate(p)) {
+            this._searchEnableCube(p, value, cubeArry);
+        }
+        // 获取最大长度的数组，解决下落问题
+        var maxLArry = [];
+        for (var i = 0; i < cubeArry.length; i++) {
+            var arryItem = [];
+            if (this.isEliminate(p)) {
+                this._searchEnableCube(p, value, arryItem);
             }
+            if (arryItem.length > maxLArry.length) {
+                maxLArry = arryItem;
+            }
+        }
+        if (maxLArry.length > cubeArry.length) {
+            cubeArry = maxLArry;
         }
         this.setMapEmptyCube(cubeArry);
 
@@ -71,7 +77,7 @@ var EliminateHelper = {
             for (var m = map.length - 1; m >= 0; m--) {
                 if (map[m][n] == this._emptyType) {
                     map[m][n] = this.getRandNum(1, 6);
-                    // map[m][n] = 1;
+                    //map[m][n] = 4;
                     arry.push(cc.p(n, m));
                 }
             }
@@ -118,19 +124,34 @@ var EliminateHelper = {
             this._map[objP.y][objP.x] = this._emptyType;
         }
     },
-    _searchEArryM: function (p, dp, value, cArry) {
+    _searchEnableCube: function (p, value, cArry) {
         if (!this._checkP(p)) {
             return;
         }
-        if (value == this._map[p.y][p.x]) {
-            cArry.push(p);
-        } else {
+        if (value != this._map[p.y][p.x]) {
             return;
         }
-        var nextP = cc.p(p.x + dp.x, p.y + dp.y);
-        this._searchEArryM(nextP, dp, value, cArry);
+        if (this._isInArry(p, cArry)) {
+            return;
+        }
+        if (!this._checkNearCube(p)) {
+            return;
+        }
+        cArry.push(p);
+        //console.log("px " + p.x + " py " + p.y);
+        for (var i = 0; i < this._directionP.length; i++) {
+            var objP = this._directionP[i];
+            var nextP = cc.p(p.x + objP.x, p.y + objP.y);
+            this._searchEnableCube(nextP, value, cArry);
+        }
     },
-
+    // 检测是否是相邻可用点
+    _checkNearCube: function (p) {
+        var near1Dobj = this._getNear(p, 1);
+        var near2Dobj = this._getNear(p, 2);
+        var near1OblDobj = this._getNearOblique(p, 1);
+        return this._isEffectLine(near1Dobj, near2Dobj) || this._isEffectTian(near1Dobj, near1OblDobj);
+    },
     _searchEArry: function (p, dp, value, cArry, findN) {
         if (findN && cArry.length >= findN) {
             return;
@@ -145,7 +166,7 @@ var EliminateHelper = {
             return;
         }
         var nextP = cc.p(p.x + dp.x, p.y + dp.y);
-        this._searchEArry(nextP, dp, value, cArry,findN);
+        this._searchEArry(nextP, dp, value, cArry, findN);
     },
 
     // 是否有可消除
@@ -182,59 +203,15 @@ var EliminateHelper = {
     },
     // 可消除
     isEliminate: function (p) {
-        var cArry = this._isEliminateType(p);
-        if (cArry.length > 0) {
+        return this._isEliminateType(p);
+    },
+    _isEliminateType: function (p) {
+        var eliType = this._getEliType(p);
+        if (eliType >= 0) {
+            console.log("eliType : " + eliType);
             return true;
         }
         return false;
-    },
-    _isEliminateType: function (p) {
-        var j = p.x;
-        var i = p.y;
-        var map = this._map;
-        var cP = cc.p(j, i);
-
-        var cArry = [];
-
-        // 比较中心十字点的值
-        var bIndex = 0;
-        // 左右
-        var pLeft = cc.p(cP.x - 1, cP.y);
-        var pRight = cc.p(cP.x + 1, cP.y);
-
-        if (this._checkP(pLeft) && this._checkP(pRight)) {
-            if (this._compareMapValue(cP, pLeft) && this._compareMapValue(cP, pRight)) {
-                this.pushArryUnique(cArry, cc.p(-1, 0));
-                this.pushArryUnique(cArry, cc.p(1, 0));
-                // bIndex = 2;
-            }
-        }
-
-        // 上下
-        var pUp = cc.p(cP.x, cP.y - 1);
-        var pDown = cc.p(cP.x, cP.y + 1);
-
-        if (this._checkP(pUp) && this._checkP(pDown)) {
-            if (this._compareMapValue(cP, pUp) && this._compareMapValue(cP, pDown)) {
-                this.pushArryUnique(cArry, cc.p(0, 1));
-                this.pushArryUnique(cArry, cc.p(0, -1));
-                // bIndex = this._directionDP.length;
-            }
-        }
-
-        // 比较上下左右 两个点的值
-        for (var m = bIndex; m < this._directionDP.length; m++) {
-            var objP = this._directionDP[m];
-            var objP0 = cc.p(objP[0].x + j, objP[0].y + i);
-            var objP1 = cc.p(objP[1].x + j, objP[1].y + i);
-
-            if (this._checkP(objP0) && this._checkP(objP1)) {
-                if (this._compareMapValue(cP, objP0) && this._compareMapValue(cP, objP1)) {
-                    this.pushArryUnique(cArry, cc.p(objP[0].x, objP[0].y));
-                }
-            }
-        }
-        return cArry;
     },
     _getEliType: function (p) {
 
@@ -357,6 +334,15 @@ var EliminateHelper = {
         }
         return dObj;
     },
+    _isInArry: function (p, arry) {
+        for (var i = 0; i < arry.length; i++) {
+            var objP = arry[i];
+            if (p.x == objP.x && p.y == objP.y) {
+                return true;
+            }
+        }
+        return false;
+    },
     _getNearOblique: function (p, nearN) {
         var value = this._map[p.y][p.x]
         // 上左 // 下左// 上右 // 下右
@@ -446,7 +432,8 @@ var EliminateHelper = {
             for (var n = 0; n < this._map[0].length; n++) {
                 while (true) {
                     var randnum = this.getRandNum(1, 6);
-                    this._map[m][n] = randnum;
+                    // this._map[m][n] = randnum;
+                    this._map[m][n] = 4;
                     if (!this.isEliminate(cc.p(n, m))) {
                         break;
                     }
@@ -475,14 +462,14 @@ var EliminateHelper = {
         this._map[p2.y][p2.x] = value;
     },
     debugLog: function () {
-        var map = this._map;
-        cc.log("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-        for (var m = 0; m < this._map.length; m++) {
-            var str = "[ ";
-            for (var n = 0; n < this._map[0].length; n++) {
-                str = str + map[m][n] + " , ";
-            }
-            console.log(str + "],");
-        }
+        //var map = this._map;
+        //cc.log("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+        //for (var m = 0; m < this._map.length; m++) {
+        //    var str = "[ ";
+        //    for (var n = 0; n < this._map[0].length; n++) {
+        //        str = str + map[m][n] + " , ";
+        //    }
+        //    console.log(str + "],");
+        //}
     }
 }
