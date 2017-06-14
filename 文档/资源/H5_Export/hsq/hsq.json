@@ -1,0 +1,201 @@
+{
+"skeleton": { "hash": "dNBsilUGctozq+VohTDaDJgVZEQ", "spine": "2.1.27", "width": 37.8, "height": 37.8, "images": "" },
+"bones": [
+	{ "name": "root" },
+	{ "name": "blue", "parent": "root", "scaleX": 0.42, "scaleY": 0.42 },
+	{ "name": "green", "parent": "root", "scaleX": 0.42, "scaleY": 0.42 },
+	{ "name": "orange", "parent": "root", "scaleX": 0.42, "scaleY": 0.42 },
+	{ "name": "purple", "parent": "root", "scaleX": 0.42, "scaleY": 0.42 },
+	{ "name": "red", "parent": "root", "scaleX": 0.42, "scaleY": 0.42 },
+	{ "name": "yellow", "parent": "root", "scaleX": 0.42, "scaleY": 0.42 }
+],
+"slots": [
+	{ "name": "zhb1", "bone": "blue", "attachment": "zhb1" },
+	{ "name": "zhg1", "bone": "green" },
+	{ "name": "zho1", "bone": "orange" },
+	{ "name": "zhp1", "bone": "purple" },
+	{ "name": "zhr1", "bone": "red" },
+	{ "name": "zhy1", "bone": "yellow" }
+],
+"skins": {
+	"default": {
+		"zhb1": {
+			"zhb1": { "width": 90, "height": 90 },
+			"zhb2": { "width": 90, "height": 90 },
+			"zhb3": { "width": 90, "height": 90 },
+			"zhb4": { "width": 90, "height": 90 }
+		},
+		"zhg1": {
+			"zhg1": { "width": 90, "height": 90 },
+			"zhg2": { "width": 90, "height": 90 },
+			"zhg3": { "width": 90, "height": 90 },
+			"zhg4": { "width": 90, "height": 90 }
+		},
+		"zho1": {
+			"zho1": { "width": 90, "height": 90 },
+			"zho2": { "width": 90, "height": 90 },
+			"zho3": { "width": 90, "height": 90 },
+			"zho4": { "width": 90, "height": 90 }
+		},
+		"zhp1": {
+			"zhp1": { "width": 90, "height": 90 },
+			"zhp2": { "width": 90, "height": 90 },
+			"zhp3": { "width": 90, "height": 90 },
+			"zhp4": { "width": 90, "height": 90 }
+		},
+		"zhr1": {
+			"zhr1": { "width": 90, "height": 90 },
+			"zhr2": { "width": 90, "height": 90 },
+			"zhr3": { "width": 90, "height": 90 },
+			"zhr4": { "width": 90, "height": 90 }
+		},
+		"zhy1": {
+			"zhy1": { "width": 90, "height": 90 },
+			"zhy2": { "width": 90, "height": 90 },
+			"zhy3": { "width": 90, "height": 90 },
+			"zhy4": { "width": 90, "height": 90 }
+		}
+	}
+},
+"animations": {
+	"blue1": {
+		"slots": {
+			"zhb1": {
+				"attachment": [
+					{ "time": 0, "name": "zhb1" }
+				]
+			}
+		},
+		"bones": {
+			"blue": {
+				"rotate": [
+					{ "time": 0, "angle": 0 }
+				],
+				"translate": [
+					{ "time": 0, "x": 0, "y": 0 }
+				],
+				"scale": [
+					{ "time": 0, "x": 1, "y": 1 }
+				]
+			}
+		}
+	},
+	"blue2": {
+		"slots": {
+			"zhb1": {
+				"attachment": [
+					{ "time": 0, "name": "zhb1" },
+					{ "time": 0.1, "name": "zhb2" },
+					{ "time": 0.2, "name": "zhb3" },
+					{ "time": 0.3, "name": "zhb4" },
+					{ "time": 0.4, "name": "zhb1" }
+				]
+			}
+		},
+		"bones": {
+			"blue": {
+				"rotate": [
+					{ "time": 0, "angle": 0, "curve": "stepped" },
+					{ "time": 0.4, "angle": 0 }
+				],
+				"translate": [
+					{ "time": 0, "x": 0, "y": 0, "curve": "stepped" },
+					{ "time": 0.4, "x": 0, "y": 0 }
+				],
+				"scale": [
+					{ "time": 0, "x": 1, "y": 1, "curve": "stepped" },
+					{ "time": 0.4, "x": 1, "y": 1 }
+				]
+			}
+		}
+	},
+	"green1": {
+		"slots": {
+			"zhg1": {
+				"attachment": [
+					{ "time": 0, "name": "zhg1" }
+				]
+			}
+		}
+	},
+	"green2": {
+		"slots": {
+			"zhg1": {
+				"attachment": [
+					{ "time": 0, "name": "zhg1" },
+					{ "time": 0.1, "name": "zhg2" },
+					{ "time": 0.2, "name": "zhg3" },
+					{ "time": 0.3, "name": "zhg4" },
+					{ "time": 0.4, "name": "zhg1" }
+				]
+			}
+		}
+	},
+	"purple1": {
+		"slots": {
+			"zhp1": {
+				"attachment": [
+					{ "time": 0, "name": "zhp1" }
+				]
+			}
+		}
+	},
+	"purple2": {
+		"slots": {
+			"zhp1": {
+				"attachment": [
+					{ "time": 0, "name": "zhp1" },
+					{ "time": 0.1, "name": "zhp2" },
+					{ "time": 0.2, "name": "zhp3" },
+					{ "time": 0.3, "name": "zhp4" },
+					{ "time": 0.4, "name": "zhp1" }
+				]
+			}
+		}
+	},
+	"red1": {
+		"slots": {
+			"zhr1": {
+				"attachment": [
+					{ "time": 0, "name": "zhr1" }
+				]
+			}
+		}
+	},
+	"red2": {
+		"slots": {
+			"zhr1": {
+				"attachment": [
+					{ "time": 0, "name": "zhr1" },
+					{ "time": 0.1, "name": "zhr2" },
+					{ "time": 0.2, "name": "zhr3" },
+					{ "time": 0.3, "name": "zhr4" },
+					{ "time": 0.4, "name": "zhr1" }
+				]
+			}
+		}
+	},
+	"yellow1": {
+		"slots": {
+			"zhy1": {
+				"attachment": [
+					{ "time": 0, "name": "zhy1" }
+				]
+			}
+		}
+	},
+	"yellow2": {
+		"slots": {
+			"zhy1": {
+				"attachment": [
+					{ "time": 0, "name": "zhy1" },
+					{ "time": 0.1, "name": "zhy2" },
+					{ "time": 0.2, "name": "zhy3" },
+					{ "time": 0.3, "name": "zhy4" },
+					{ "time": 0.4, "name": "zhy1" }
+				]
+			}
+		}
+	}
+}
+}
