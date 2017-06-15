@@ -5,10 +5,11 @@ var HelloWorldLayer = cc.Layer.extend({
     mapOriginP: null,
     touchBeganP: null,
     cubeArry: [], // 保存方块
-    cubeMoveV: 250, // 块的下落速度
-    swapCubeT: 0.4, // 交换速度
+    cubeMoveV: 450, // 块的下落速度
+    swapCubeT: 0.2, // 交换速度
     isMoveFlag: false, // 动画运动中
     cubeLayer: null,
+    effectLayer: null,
     ctor: function () {
         this._super();
         this.initData();
@@ -24,24 +25,28 @@ var HelloWorldLayer = cc.Layer.extend({
         var bj2 = new cc.Sprite(res.bj02_png);
         bj2.setAnchorPoint(cc.p(0, 1));
         bj2.setPosition(cc.p(0, cc.winSize.height));
-        this.addChild(bj2, 6);
+        this.addChild(bj2, 10);
 
         var bj1 = new cc.Sprite(res.bj01_png);
         bj1.setAnchorPoint(cc.p(0, 0));
         bj1.setPosition(cc.p(0, 0));
-        this.addChild(bj1, 8);
+        this.addChild(bj1, 12);
 
         var spine = new sp.SkeletonAnimation(res.leopard_ani_json, res.leopard_ani_atlas);
         spine.setAnimation(0, 'action_1', true);
         spine.setPosition(cc.p(160, 335));
         spine.setScale(2);
-        this.addChild(spine, 7);
+        this.addChild(spine, 11);
 
-        var spineboy = new sp.SkeletonAnimation(res.spineboy_json, res.spineboy_atlas);
-        spineboy.setAnimation(0, 'shuxiao', true);
-        spineboy.setScale(0.5);
-        spineboy.setPosition(cc.p(cc.winSize.width / 2, cc.winSize.height / 2));
-       // this.addChild(spineboy, 7);
+        // 特效层
+        var effectLayer = new cc.Layer();
+        this.addChild(effectLayer, 6);
+        this.effectLayer = effectLayer;
+        //var spineboy = new sp.SkeletonAnimation(res.hong_json, res.hong_atlas);
+        //spineboy.setAnimation(0, 'hong', true);
+        //spineboy.setScale(0.5);
+        //spineboy.setPosition(cc.p(cc.winSize.width / 2, cc.winSize.height / 2));
+        //this.addChild(spineboy, 7);
 
         //var bgLayer = new cc.Layer();
         //for (var m = 0; m < this.mapSize.height; m++) {
@@ -61,6 +66,7 @@ var HelloWorldLayer = cc.Layer.extend({
         var cubeLayer = new cc.Layer();
         this.cubeLayer = cubeLayer;
 
+        //this.playESBomb("lan", cc.p(2, 2));
         for (var m = 0; m < this.mapSize.height; m++) {
             for (var n = 0; n < this.mapSize.width; n++) {
                 var cubeSp = this.createCubeSp(Map[m][n]);
@@ -180,6 +186,9 @@ var HelloWorldLayer = cc.Layer.extend({
         var py = this.mapOriginP.y - logicP.y * this.cubeSize.height;
         return cc.p(px, py);
     },
+    getCubeValue: function (p) {
+        return Map[p.y][p.x];
+    },
     swapCubeObject: function (logicP1, logicP2) {
         var cube1 = this.getCubeSpByP(logicP1);
         var cube2 = this.getCubeSpByP(logicP2);
@@ -263,6 +272,9 @@ var HelloWorldLayer = cc.Layer.extend({
         for (var i = 0; i < arry.length; i++) {
             this.eliminateCube(arry[i]);
         }
+        this.scheduleOnce(this.downCubeInterFace, 0.5);
+    },
+    downCubeInterFace: function () {
         // 下落 maxTime 下落最大时间
         var mdArry = EliminateHelper.moveDownCube();
         var mMaxTime = this.moveDownCube(mdArry);
@@ -295,7 +307,6 @@ var HelloWorldLayer = cc.Layer.extend({
 
         this.isMoveFlag = true;
         this.scheduleOnce(downCallfun, mMaxTime);
-
     },
     // 消除
     eliminateCube: function (p) {
@@ -309,6 +320,8 @@ var HelloWorldLayer = cc.Layer.extend({
             var cube = this.getCubeSpByP(objP);
             cube.setVisible(false);
             cube.removeFromParent();
+            // 爆炸
+            this.playESBomb(effectType[cube.index], objP);
         }
 
 
@@ -361,15 +374,31 @@ var HelloWorldLayer = cc.Layer.extend({
     },
     createCubeSp: function (index) {
         var cubeSp = new cc.Sprite(res["fruit" + index + "1"]);
-        var label = cc.LabelTTF.create("" + index, "Arial", 40);
-        label.setColor(cc.color(0, 0, 0));
-        label.setPosition(cc.p(this.cubeSize.width / 2, this.cubeSize.height / 2));
+        //var label = cc.LabelTTF.create("" + index, "Arial", 40);
+        //label.setColor(cc.color(0, 0, 0));
+        //label.setPosition(cc.p(this.cubeSize.width / 2, this.cubeSize.height / 2));
+        cubeSp.index = index - 1;
         this.cubeLayer.addChild(cubeSp);
         var box = cubeSp.getBoundingBox();
         cubeSp.setScaleX(this.cubeSize.width / box.width);
         cubeSp.setScaleY(this.cubeSize.height / box.height);
 
         return cubeSp;
+    },
+    // 自身爆炸
+    playESBomb: function (name, p, callFun) {
+        this.isMoveFlag = true;
+        var spine = new sp.SkeletonAnimation(res[name + "_json"], res[name + "_atlas"]);
+        spine.setAnimation(0, name, false);
+        spine.setScale(0.5);
+        spine.setPosition(this.getScreenP(p));
+        this.effectLayer.addChild(spine);
+
+        spine.setCompleteListener(function (trackEntry) {
+            this.isMoveFlag = false;
+            //callFun();
+            spine.removeFromParent();
+        }.bind(this));
     }
 });
 

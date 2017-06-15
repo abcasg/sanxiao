@@ -1,5 +1,6 @@
+var effectType = ["hong", "lv", "lan", "huang", "zi"];
+
 var res = {
-    bg_png: "res/bg.png",
     bj01_png: "res/bj01.png",
     bj02_png: "res/bj02.png",
     bj03_png: "res/bj03.png",
@@ -21,6 +22,13 @@ for (var i = 1; i <= 5; i++) {
         res["fruit" + i + j] = "res/fruit_0" + i + "_0" + j + ".png";
     }
 }
+
+for (var i = 0; i < 5; i++) {
+    res[effectType[i] + "_png"] = "res/fruitEle/" + effectType[i] + ".png";
+    res[effectType[i] + "_json"] = "res/fruitEle/" + effectType[i] + ".json";
+    res[effectType[i] + "_atlas"] = "res/fruitEle/" + effectType[i] + ".atlas";
+}
+
 var g_resources = [];
 for (var i in res) {
     g_resources.push(res[i]);
