@@ -244,10 +244,8 @@ cc.FLT_EPSILON = 0.0000001192092896;
  * @return {Number}
  * @function
  */
-cc.contentScaleFactor = cc.IS_RETINA_DISPLAY_SUPPORTED ? function () {
-    return cc.director.getContentScaleFactor();
-} : function () {
-    return 1;
+cc.contentScaleFactor = function () {
+    return cc.director._contentScaleFactor;
 };
 
 /**
@@ -312,12 +310,10 @@ cc._sizePixelsToPointsOut = function (sizeInPixels, outSize) {
  * @return {cc.Rect}
  * @function
  */
-cc.rectPixelsToPoints = cc.IS_RETINA_DISPLAY_SUPPORTED ? function (pixel) {
+cc.rectPixelsToPoints = function (pixel) {
     var scale = cc.contentScaleFactor();
     return cc.rect(pixel.x / scale, pixel.y / scale,
         pixel.width / scale, pixel.height / scale);
-} : function (p) {
-    return p;
 };
 
 /**
@@ -326,12 +322,10 @@ cc.rectPixelsToPoints = cc.IS_RETINA_DISPLAY_SUPPORTED ? function (pixel) {
  * @return {cc.Rect}
  * @function
  */
-cc.rectPointsToPixels = cc.IS_RETINA_DISPLAY_SUPPORTED ? function (point) {
+cc.rectPointsToPixels = function (point) {
    var scale = cc.contentScaleFactor();
     return cc.rect(point.x * scale, point.y * scale,
         point.width * scale, point.height * scale);
-} : function (p) {
-    return p;
 };
 
 //some gl constant variable
@@ -497,6 +491,14 @@ cc.ORIENTATION_LANDSCAPE = 2;
  */
 cc.ORIENTATION_AUTO = 3;
 
+/**
+ * The limit count for concurrency http request, useful in some mobile browsers
+ * Adjust its value with the test results based on your game, the preset value is just a placeholder
+ * @constant
+ * @type Number
+ */
+cc.CONCURRENCY_HTTP_REQUEST_COUNT = cc.sys.isMobile ? 20 : 0;
+
 
 // ------------------- vertex attrib flags -----------------------------
 /**
@@ -616,6 +618,11 @@ cc.SHADER_SPRITE_POSITION_TEXTURECOLOR = "ShaderSpritePositionTextureColor";
  * @constant
  * @type {String}
  */
+cc.SHADER_SPRITE_POSITION_TEXTURECOLOR_GRAY = "ShaderSpritePositionTextureColorGray";
+/**
+ * @constant
+ * @type {String}
+ */
 cc.SHADER_POSITION_TEXTURECOLORALPHATEST = "ShaderPositionTextureColorAlphaTest";
 /**
  * @constant
@@ -641,7 +648,7 @@ cc.SHADER_POSITION_TEXTURE = "ShaderPositionTexture";
  * @constant
  * @type {String}
  */
-cc.SHADER_POSITION_TEXTURE_UCOLOR = "ShaderPositionTexture_uColor";
+cc.SHADER_POSITION_TEXTURE_UCOLOR = "ShaderPositionTextureUColor";
 /**
  * @constant
  * @type {String}
@@ -651,7 +658,7 @@ cc.SHADER_POSITION_TEXTUREA8COLOR = "ShaderPositionTextureA8Color";
  * @constant
  * @type {String}
  */
-cc.SHADER_POSITION_UCOLOR = "ShaderPosition_uColor";
+cc.SHADER_POSITION_UCOLOR = "ShaderPositionUColor";
 /**
  * @constant
  * @type {String}

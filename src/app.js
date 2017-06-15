@@ -28,9 +28,15 @@ var HelloWorldLayer = cc.Layer.extend({
         this.addChild(bj1, 4);
 
         var spine = new sp.SkeletonAnimation('res/leopard/leopard_ani.json', 'res/leopard/leopard_ani.atlas');
-        spine.setAnimation(0, 'action_1', true);
+        spine.setAnimation(0, 'action_7', true);
         spine.setPosition(cc.p(cc.winSize.width / 2, cc.winSize.height / 2));
-        //this.addChild(spine,7);
+        this.addChild(spine,7);
+
+        //var spineboy = new sp.SkeletonAnimation('res/leopard/ndj.json', 'res/leopard/ndj.atlas');
+        //spineboy.setAnimation(0, 'zhizhen_start', true);
+        //spineboy.setScale(0.5);
+        //spineboy.setPosition(cc.p(cc.winSize.width / 2, cc.winSize.height / 2));
+        //this.addChild(spineboy,7);
         //var bgLayer = new cc.Layer();
         //for (var m = 0; m < this.mapSize.height; m++) {
         //    for (var n = 0; n < this.mapSize.width; n++) {

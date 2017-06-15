@@ -84,19 +84,14 @@ cc.Menu = cc.Layer.extend(/** @lends cc.Menu# */{
             onTouchCancelled: this._onTouchCancelled
         });
 
-        if ((arguments.length > 0) && (arguments[arguments.length - 1] == null))
-            cc.log("parameters should not be ending with null in Javascript");
-
         var argc = arguments.length, items;
-        if (argc === 0) {
-            items = [];
-        } else if (argc === 1) {
-            if (menuItems instanceof Array) {
-                items = menuItems;
-            }
-            else items = [menuItems];
+        if (menuItems instanceof Array) {
+            items = menuItems;
         }
-        else if (argc > 1) {
+        else if (argc === 0) {
+            items = [];
+        }
+        else if (argc > 0) {
             items = [];
             for (var i = 0; i < argc; i++) {
                 if (arguments[i])
@@ -198,6 +193,17 @@ cc.Menu = cc.Layer.extend(/** @lends cc.Menu# */{
         cc.Layer.prototype.addChild.call(this, child, zOrder, tag);
     },
 
+    updateAlign: function () {
+        switch (this._align) {
+            case 'vertically':
+                this.alignItemsVertically();
+                break;
+            case 'horizontally':
+                this.alignItemsHorizontally();
+                break;
+        }
+    },
+
     /**
      * align items vertically with default padding
      */
@@ -210,6 +216,7 @@ cc.Menu = cc.Layer.extend(/** @lends cc.Menu# */{
      * @param {Number} padding
      */
     alignItemsVerticallyWithPadding: function (padding) {
+        this._align = 'vertically';
         var height = -padding, locChildren = this._children, len, i, locScaleY, locHeight, locChild;
         if (locChildren && locChildren.length > 0) {
             for (i = 0, len = locChildren.length; i < len; i++)
@@ -239,6 +246,7 @@ cc.Menu = cc.Layer.extend(/** @lends cc.Menu# */{
      * @param {Number} padding
      */
     alignItemsHorizontallyWithPadding: function (padding) {
+        this._align = 'horizontally';
         var width = -padding, locChildren = this._children, i, len, locScaleX, locWidth, locChild;
         if (locChildren && locChildren.length > 0) {
             for (i = 0, len = locChildren.length; i < len; i++)
@@ -268,8 +276,8 @@ cc.Menu = cc.Layer.extend(/** @lends cc.Menu# */{
         if ((arguments.length > 0) && (arguments[arguments.length - 1] == null))
             cc.log("parameters should not be ending with null in Javascript");
 
-        var rows = [];
-        for (var i = 0; i < arguments.length; i++) {
+        var i, rows = [];
+        for (i = 0; i < arguments.length; i++) {
             rows.push(arguments[i]);
         }
         var height = -5;
@@ -350,7 +358,7 @@ cc.Menu = cc.Layer.extend(/** @lends cc.Menu# */{
     alignItemsInRows: function (/*Multiple arguments*/) {
         if ((arguments.length > 0) && (arguments[arguments.length - 1] == null))
             cc.log("parameters should not be ending with null in Javascript");
-        var columns = [], i;
+        var i, columns = [];
         for (i = 0; i < arguments.length; i++) {
             columns.push(arguments[i]);
         }
@@ -545,7 +553,7 @@ cc.Menu = cc.Layer.extend(/** @lends cc.Menu# */{
     },
     /**
      * only use for jsbinding
-      * @returns {boolean}
+     * @returns {boolean}
      */
     isOpacityModifyRGB: function () {
         return false;

@@ -6,6 +6,10 @@ var res = {
     leopard_ani_json: "res/leopard/leopard_ani.json",
     leopard_ani_atlas: "res/leopard/leopard_ani.atlas",
 
+    spineboy_png: "res/leopard/ndj.png",
+    spineboy_json: "res/leopard/ndj.json",
+    spineboy_atlas: "res/leopard/ndj.atlas",
+
     //cubebg_png: "res/cubebg.png"
 };
 //for (var i = 1; i <= 6; i++) {

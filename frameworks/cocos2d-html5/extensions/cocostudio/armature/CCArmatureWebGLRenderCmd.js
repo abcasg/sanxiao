@@ -22,14 +22,17 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-(function(){
+(function () {
 
-    ccs.Armature.WebGLRenderCmd = function(renderableObject){
-        cc.Node.WebGLRenderCmd.call(this, renderableObject);
+    ccs.Armature.WebGLRenderCmd = function (renderableObject) {
+        this._rootCtor(renderableObject);
         this._needDraw = true;
 
         this._parentCmd = null;
-        this._realAnchorPointInPoints = new cc.Point(0,0);
+        this._realAnchorPointInPoints = new cc.Point(0, 0);
+
+        this._transform = {a: 1, b: 0, c: 0, d: 1, tx: 0, ty: 0};
+        this._worldTransform = {a: 1, b: 0, c: 0, d: 1, tx: 0, ty: 0};
     };
 
     var proto = ccs.Armature.WebGLRenderCmd.prototype = Object.create(cc.Node.WebGLRenderCmd.prototype);
@@ -44,6 +47,7 @@
         var alphaPremultiplied = cc.BlendFunc.ALPHA_PREMULTIPLIED, alphaNonPremultipled = cc.BlendFunc.ALPHA_NON_PREMULTIPLIED;
         for (var i = 0, len = locChildren.length; i < len; i++) {
             var selBone = locChildren[i];
+            var boneCmd = selBone._renderCmd;
             if (selBone && selBone.getDisplayRenderNode) {
                 var selNode = selBone.getDisplayRenderNode();
                 if (null === selNode)
@@ -60,9 +64,10 @@
                             if (func.src !== alphaPremultiplied.src || func.dst !== alphaPremultiplied.dst)
                                 selNode.setBlendFunc(selBone.getBlendFunc());
                             else {
-                                if (node._blendFunc.src === alphaPremultiplied.src && 
-                                    node._blendFunc.dst === alphaPremultiplied.dst && 
-                                    !selNode.getTexture().hasPremultipliedAlpha()) {
+                                var tex = selNode.getTexture();
+                                if (node._blendFunc.src === alphaPremultiplied.src &&
+                                    node._blendFunc.dst === alphaPremultiplied.dst &&
+                                    tex && !tex.hasPremultipliedAlpha()) {
                                     selNode.setBlendFunc(alphaNonPremultipled);
                                 }
                                 else {
@@ -75,31 +80,32 @@
                         break;
                     case ccs.DISPLAY_TYPE_ARMATURE:
                         selNode.setShaderProgram(this._shaderProgram);
+                        this._updateColorAndOpacity(cmd, selBone);
                         cmd._parentCmd = this;
-                        // Continue rendering in default
+                    // Continue rendering in default
                     default:
+                        boneCmd._syncStatus(parentCmd);
+                        cmd._syncStatus(boneCmd);
                         if (cmd.uploadData) {
                             cc.renderer._uploadBufferData(cmd);
                         }
-                        else {
+                        else if (cmd.rendering) {
                             // Finish previous batch
                             cc.renderer._batchRendering();
-                            cmd.transform(this);
                             cmd.rendering(cc._renderContext);
                         }
                         break;
                 }
             } else if (selBone instanceof cc.Node) {
                 selBone.setShaderProgram(this._shaderProgram);
-                cmd = selBone._renderCmd;
-                cmd.transform(this);
-                if (cmd.uploadData) {
-                    cc.renderer._uploadBufferData(cmd);
+                boneCmd._syncStatus(parentCmd);
+                if (boneCmd.uploadData) {
+                    cc.renderer._uploadBufferData(boneCmd);
                 }
-                else if (cmd.rendering) {
+                else if (boneCmd.rendering) {
                     // Finish previous batch
                     cc.renderer._batchRendering();
-                    cmd.rendering(cc._renderContext);
+                    boneCmd.rendering(cc._renderContext);
                 }
             }
         }
@@ -107,29 +113,30 @@
         return 0;
     };
 
-    proto.initShaderCache = function(){
+    proto.initShaderCache = function () {
         this._shaderProgram = cc.shaderCache.programForKey(cc.SHADER_SPRITE_POSITION_TEXTURECOLOR);
     };
 
-    proto.setShaderProgram = function(shaderProgram){
+    proto.setShaderProgram = function (shaderProgram) {
         this._shaderProgram = shaderProgram;
     };
 
-    proto._updateColorAndOpacity = function(skinRenderCmd, bone){
+    proto._updateColorAndOpacity = function (skinRenderCmd, bone) {
         //update displayNode's color and opacity
         var parentColor = bone._renderCmd._displayedColor, parentOpacity = bone._renderCmd._displayedOpacity;
+
         var flags = cc.Node._dirtyFlags, locFlag = skinRenderCmd._dirtyFlag;
         var colorDirty = locFlag & flags.colorDirty,
             opacityDirty = locFlag & flags.opacityDirty;
-        if(colorDirty)
+        if (colorDirty)
             skinRenderCmd._updateDisplayColor(parentColor);
-        if(opacityDirty)
+        if (opacityDirty)
             skinRenderCmd._updateDisplayOpacity(parentOpacity);
-        if(colorDirty || opacityDirty)
+        if (colorDirty || opacityDirty)
             skinRenderCmd._updateColor();
     };
 
-    proto.visit = function(parentCmd){
+    proto.visit = function (parentCmd) {
         var node = this._node;
         // quick return if not visible. children won't be drawn.
         if (!node._visible)
@@ -138,13 +145,18 @@
         parentCmd = parentCmd || this.getParentRenderCmd();
         if (parentCmd)
             this._curLevel = parentCmd._curLevel + 1;
-        this.updateStatus(parentCmd);
+
+        this._syncStatus(parentCmd);
 
         node.sortAllChildren();
-
         var renderer = cc.renderer,
             children = node._children, child,
             i, len = children.length;
+
+        if (isNaN(node._customZ)) {
+            node._vertexZ = renderer.assignedZ;
+            renderer.assignedZ += renderer.assignedZStep;
+        }
 
         for (i = 0; i < len; i++) {
             child = children[i];
@@ -159,12 +171,7 @@
             }
         }
 
-        if (isNaN(node._customZ)) {
-            node._vertexZ = renderer.assignedZ;
-            renderer.assignedZ += renderer.assignedZStep;
-        }
         renderer.pushRenderCommand(this);
-        
         for (; i < len; i++) {
             child = children[i];
             if (isNaN(child._customZ)) {
