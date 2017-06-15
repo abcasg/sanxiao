@@ -39,7 +39,7 @@ var EliminateHelper = {
     _disablePointV: [], // 不可用的点
     _disableValueV: [0], // 不可用的值
     _emptyType: 0,
-    _eliminateType: {"None": -1, "El3": 0, "El4": 1, "ElTian": 2, "ElL": 3, "ElT": 4, "El5": 5}, // 消除类型 //直线5消>T字消>L字消>田字消>直线4消>3消
+    _eliminateType: {"None": -1, "El3": 0, "El4h": 1, "El4s": 1, "ElTian": 2, "ElL": 3, "ElT": 4, "El5": 5}, // 消除类型 //直线5消>T字消>L字消>田字消>直线4消>3消
     // 获取消除的数组
     getElArry: function (p) {
         var cubeArry = [];
@@ -234,8 +234,9 @@ var EliminateHelper = {
         if (this._isEffectTian(near1Dobj, near1OblDobj)) {
             return this._eliminateType.ElTian;
         }
-        if (this._isEffectLine(near1Dobj, near2Dobj)) {
-            return this._eliminateType.El3;
+        var effectLineType = this._isEffectLine(near1Dobj, near2Dobj);
+        if (effectLineType && effectLineType >= 0) {
+            return effectLineType;
         }
         return this._eliminateType.None;
     },
@@ -307,17 +308,14 @@ var EliminateHelper = {
     },
     _isEffectLine: function (near1Dobj, near2Dobj) {
         // 横
-        if (near1Dobj.Left && near1Dobj.Right) {
-            return true;
+        if ((near1Dobj.Left && near1Dobj.Right) || near2Dobj.Left || near2Dobj.Right) {
+            return this._eliminateType.El4h;
         }
         // 竖
-        if (near1Dobj.Up && near1Dobj.Down) {
-            return true;
+        if ((near1Dobj.Up && near1Dobj.Down) || near2Dobj.Up || near2Dobj.Down) {
+            return this._eliminateType.El4s;
         }
-        if (near2Dobj.Up || near2Dobj.Down || near2Dobj.Left || near2Dobj.Right) {
-            return true;
-        }
-        return false;
+        return null;
     },
     _getNear: function (p, nearN) {
         var value = this._map[p.y][p.x]
