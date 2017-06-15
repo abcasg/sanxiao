@@ -39,7 +39,8 @@ var EliminateHelper = {
     _disablePointV: [], // 不可用的点
     _disableValueV: [0], // 不可用的值
     _emptyType: 0,
-    _eliminateType: {"None": -1, "El3": 0, "El4h": 1, "El4s": 1, "ElTian": 2, "ElL": 3, "ElT": 4, "El5": 5}, // 消除类型 //直线5消>T字消>L字消>田字消>直线4消>3消
+    _eliTImage: [0, 2, 3, 2, 4, 5, 111], // 对应的图片
+    _eliminateType: {"None": -1, "El3": 0, "El4h": 1, "El4s": 2, "ElTian": 3, "ElL": 4, "ElT": 5, "El5": 6}, // 消除类型 //直线5消>T字消>L字消>田字消>直线4消>3消
     // 获取消除的数组
     getElArry: function (p) {
         var cubeArry = [];
@@ -52,21 +53,35 @@ var EliminateHelper = {
         }
         // 获取最大长度的数组，解决下落问题
         var maxLArry = [];
+        // 类型
+        var celType = this._eliminateType.None;
         for (var i = 0; i < cubeArry.length; i++) {
             var arryItem = [];
-            if (this.isEliminate(p)) {
+            var elType = this._getEliType(p);
+            if (elType >= 0) {
                 this._searchEnableCube(p, value, arryItem);
             }
             if (arryItem.length > maxLArry.length) {
                 maxLArry = arryItem;
+                celType = elType;
             }
         }
         if (maxLArry.length > cubeArry.length) {
             cubeArry = maxLArry;
         }
         this.setMapEmptyCube(cubeArry);
-
+        cubeArry.celType = celType;
         return cubeArry;
+    },
+    // 处理特殊方块
+    dealSpecialCube: function (type, p, cubeValue) {
+        var imageIndex = this._eliTImage[type];
+        // 彩虹消除
+        if (this._eliminateType.El5 == type) {
+            this._map[p.y][p.x] = imageIndex;
+        } else {
+            this._map[p.y][p.x] = cubeValue * 10 + imageIndex;
+        }
     },
     // 创建下落的方块
     createDownCube: function () {
@@ -234,9 +249,14 @@ var EliminateHelper = {
         if (this._isEffectTian(near1Dobj, near1OblDobj)) {
             return this._eliminateType.ElTian;
         }
-        var effectLineType = this._isEffectLine(near1Dobj, near2Dobj);
+
+        var effectLineType = this._isEffectLine4(p, value);
         if (effectLineType && effectLineType >= 0) {
             return effectLineType;
+        }
+
+        if (this._isEffectLine(near1Dobj, near2Dobj)) {
+            return this._eliminateType.El3;
         }
         return this._eliminateType.None;
     },
@@ -277,16 +297,16 @@ var EliminateHelper = {
 
     },
     _isEffectL: function (near1Dobj, near2Dobj) {
-        if (near1Dobj.Left && near2Dobj.Up) {
+        if (near2Dobj.Left && near2Dobj.Up) {
             return true;
         }
-        if (near1Dobj.Right && near2Dobj.Up) {
+        if (near2Dobj.Right && near2Dobj.Up) {
             return true;
         }
-        if (near1Dobj.Left && near2Dobj.Down) {
+        if (near2Dobj.Left && near2Dobj.Down) {
             return true;
         }
-        if (near1Dobj.Right && near2Dobj.Down) {
+        if (near2Dobj.Right && near2Dobj.Down) {
             return true;
         }
         return false;
@@ -306,16 +326,36 @@ var EliminateHelper = {
         }
         return false;
     },
+    _isEffectLine4: function (p, value) {
+        // 直线5消
+        var dObj = {};
+        // 找到四个方向的长度
+        for (var i = 0; i < this._directionP.length; i++) {
+            var arry = [];
+            var objP = this._directionP[i];
+            this._searchEArry(cc.p(p.x + objP.x, p.y + objP.y), objP, value, arry, null);
+            dObj[this._dType[i]] = arry.length;
+        }
+        // 竖
+        if (dObj.Up + dObj.Down + 1 >= 4) {
+            return this._eliminateType.El4s;
+        }
+        // 横
+        if (dObj.Left + dObj.Right + 1 >= 4) {
+            return this._eliminateType.El4h;
+        }
+        return this._eliminateType.None;
+    },
     _isEffectLine: function (near1Dobj, near2Dobj) {
         // 横
         if ((near1Dobj.Left && near1Dobj.Right) || near2Dobj.Left || near2Dobj.Right) {
-            return this._eliminateType.El4h;
+            return true;
         }
         // 竖
         if ((near1Dobj.Up && near1Dobj.Down) || near2Dobj.Up || near2Dobj.Down) {
-            return this._eliminateType.El4s;
+            return true;
         }
-        return null;
+        return false;
     },
     _getNear: function (p, nearN) {
         var value = this._map[p.y][p.x]
@@ -460,14 +500,14 @@ var EliminateHelper = {
         this._map[p2.y][p2.x] = value;
     },
     debugLog: function () {
-        //var map = this._map;
-        //cc.log("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-        //for (var m = 0; m < this._map.length; m++) {
-        //    var str = "[ ";
-        //    for (var n = 0; n < this._map[0].length; n++) {
-        //        str = str + map[m][n] + " , ";
-        //    }
-        //    console.log(str + "],");
-        //}
+        var map = this._map;
+        cc.log("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+        for (var m = 0; m < this._map.length; m++) {
+            var str = "[ ";
+            for (var n = 0; n < this._map[0].length; n++) {
+                str = str + map[m][n] + " , ";
+            }
+            console.log(str + "],");
+        }
     }
 }

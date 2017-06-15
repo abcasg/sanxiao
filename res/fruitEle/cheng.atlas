@@ -1,0 +1,139 @@
+
+cheng.png
+size: 512,512
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+baiguang
+  rotate: false
+  xy: 2, 250
+  size: 113, 112
+  orig: 113, 112
+  offset: 0, 0
+  index: -1
+orange_guang
+  rotate: false
+  xy: 2, 364
+  size: 134, 138
+  orig: 134, 138
+  offset: 0, 0
+  index: -1
+orange_lizi/orange_lizi0001
+  rotate: true
+  xy: 247, 112
+  size: 57, 61
+  orig: 108, 123
+  offset: 24, 26
+  index: -1
+orange_lizi/orange_lizi0002
+  rotate: false
+  xy: 206, 246
+  size: 56, 64
+  orig: 108, 123
+  offset: 25, 28
+  index: -1
+orange_lizi/orange_lizi0003
+  rotate: false
+  xy: 247, 171
+  size: 61, 73
+  orig: 108, 123
+  offset: 25, 24
+  index: -1
+orange_lizi/orange_lizi0004
+  rotate: false
+  xy: 104, 156
+  size: 71, 83
+  orig: 108, 123
+  offset: 22, 20
+  index: -1
+orange_lizi/orange_lizi0005
+  rotate: true
+  xy: 138, 312
+  size: 79, 92
+  orig: 108, 123
+  offset: 20, 16
+  index: -1
+orange_lizi/orange_lizi0006
+  rotate: true
+  xy: 342, 414
+  size: 88, 101
+  orig: 108, 123
+  offset: 17, 12
+  index: -1
+orange_lizi/orange_lizi0007
+  rotate: false
+  xy: 2, 36
+  size: 92, 105
+  orig: 108, 123
+  offset: 13, 13
+  index: -1
+orange_lizi/orange_lizi0008
+  rotate: false
+  xy: 138, 393
+  size: 96, 109
+  orig: 108, 123
+  offset: 8, 14
+  index: -1
+orange_lizi/orange_lizi0009
+  rotate: false
+  xy: 2, 143
+  size: 100, 105
+  orig: 108, 123
+  offset: 4, 15
+  index: -1
+orange_lizi/orange_lizi0010
+  rotate: false
+  xy: 236, 402
+  size: 104, 100
+  orig: 108, 123
+  offset: 0, 16
+  index: -1
+orange_lizi/orange_lizi0011
+  rotate: true
+  xy: 177, 153
+  size: 86, 68
+  orig: 108, 123
+  offset: 1, 21
+  index: -1
+orange_lizi/orange_lizi0012
+  rotate: false
+  xy: 117, 241
+  size: 87, 69
+  orig: 108, 123
+  offset: 2, 18
+  index: -1
+orange_lizi/orange_lizi0013
+  rotate: false
+  xy: 342, 346
+  size: 84, 66
+  orig: 108, 123
+  offset: 3, 21
+  index: -1
+orange_lizi/orange_lizi0014
+  rotate: true
+  xy: 445, 424
+  size: 78, 63
+  orig: 108, 123
+  offset: 12, 24
+  index: -1
+orange_lizi/orange_lizi0015
+  rotate: false
+  xy: 2, 2
+  size: 34, 32
+  orig: 108, 123
+  offset: 55, 56
+  index: -1
+orange_lizi/orange_lizi0016
+  rotate: false
+  xy: 117, 348
+  size: 14, 14
+  orig: 108, 123
+  offset: 74, 58
+  index: -1
+orange_lizi/orange_lizi0017
+  rotate: false
+  xy: 104, 144
+  size: 11, 10
+  orig: 108, 123
+  offset: 77, 60
+  index: -1

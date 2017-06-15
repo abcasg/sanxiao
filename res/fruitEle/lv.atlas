@@ -1,0 +1,139 @@
+
+lv.png
+size: 512,512
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+baiguang
+  rotate: false
+  xy: 2, 249
+  size: 113, 112
+  orig: 113, 112
+  offset: 0, 0
+  index: -1
+green_guang
+  rotate: false
+  xy: 2, 363
+  size: 134, 138
+  orig: 134, 138
+  offset: 0, 0
+  index: -1
+green_lizi/green_lizi0001
+  rotate: false
+  xy: 247, 184
+  size: 57, 61
+  orig: 108, 122
+  offset: 24, 25
+  index: -1
+green_lizi/green_lizi0002
+  rotate: true
+  xy: 446, 445
+  size: 56, 64
+  orig: 108, 122
+  offset: 25, 27
+  index: -1
+green_lizi/green_lizi0003
+  rotate: true
+  xy: 206, 247
+  size: 62, 73
+  orig: 108, 122
+  offset: 24, 23
+  index: -1
+green_lizi/green_lizi0004
+  rotate: false
+  xy: 104, 155
+  size: 71, 83
+  orig: 108, 122
+  offset: 22, 19
+  index: -1
+green_lizi/green_lizi0005
+  rotate: true
+  xy: 138, 311
+  size: 79, 92
+  orig: 108, 122
+  offset: 20, 15
+  index: -1
+green_lizi/green_lizi0006
+  rotate: true
+  xy: 343, 413
+  size: 88, 101
+  orig: 108, 122
+  offset: 17, 11
+  index: -1
+green_lizi/green_lizi0007
+  rotate: false
+  xy: 2, 35
+  size: 93, 105
+  orig: 108, 122
+  offset: 12, 12
+  index: -1
+green_lizi/green_lizi0008
+  rotate: false
+  xy: 138, 392
+  size: 97, 109
+  orig: 108, 122
+  offset: 8, 13
+  index: -1
+green_lizi/green_lizi0009
+  rotate: false
+  xy: 2, 142
+  size: 100, 105
+  orig: 108, 122
+  offset: 4, 14
+  index: -1
+green_lizi/green_lizi0010
+  rotate: false
+  xy: 237, 401
+  size: 104, 100
+  orig: 108, 122
+  offset: 0, 15
+  index: -1
+green_lizi/green_lizi0011
+  rotate: true
+  xy: 177, 152
+  size: 86, 68
+  orig: 108, 122
+  offset: 1, 20
+  index: -1
+green_lizi/green_lizi0012
+  rotate: false
+  xy: 117, 240
+  size: 87, 69
+  orig: 108, 122
+  offset: 2, 18
+  index: -1
+green_lizi/green_lizi0013
+  rotate: false
+  xy: 343, 345
+  size: 84, 66
+  orig: 108, 122
+  offset: 3, 21
+  index: -1
+green_lizi/green_lizi0014
+  rotate: true
+  xy: 446, 365
+  size: 78, 63
+  orig: 108, 122
+  offset: 12, 24
+  index: -1
+green_lizi/green_lizi0015
+  rotate: false
+  xy: 2, 2
+  size: 33, 31
+  orig: 108, 122
+  offset: 56, 56
+  index: -1
+green_lizi/green_lizi0016
+  rotate: false
+  xy: 117, 347
+  size: 14, 14
+  orig: 108, 122
+  offset: 74, 58
+  index: -1
+green_lizi/green_lizi0017
+  rotate: false
+  xy: 104, 142
+  size: 11, 11
+  orig: 108, 122
+  offset: 77, 59
+  index: -1

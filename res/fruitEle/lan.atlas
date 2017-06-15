@@ -1,0 +1,139 @@
+
+lan.png
+size: 512,256
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+baiguang
+  rotate: false
+  xy: 2, 2
+  size: 113, 112
+  orig: 113, 112
+  offset: 0, 0
+  index: -1
+blue_guang
+  rotate: false
+  xy: 2, 116
+  size: 134, 138
+  orig: 134, 138
+  offset: 0, 0
+  index: -1
+blue_lizi/blue_lizi0001
+  rotate: false
+  xy: 235, 109
+  size: 45, 48
+  orig: 101, 113
+  offset: 27, 28
+  index: -1
+blue_lizi/blue_lizi0002
+  rotate: false
+  xy: 282, 43
+  size: 47, 52
+  orig: 101, 113
+  offset: 28, 29
+  index: -1
+blue_lizi/blue_lizi0003
+  rotate: false
+  xy: 282, 97
+  size: 54, 61
+  orig: 101, 113
+  offset: 25, 25
+  index: -1
+blue_lizi/blue_lizi0004
+  rotate: true
+  xy: 439, 109
+  size: 63, 71
+  orig: 101, 113
+  offset: 22, 21
+  index: -1
+blue_lizi/blue_lizi0005
+  rotate: false
+  xy: 439, 174
+  size: 71, 80
+  orig: 101, 113
+  offset: 20, 17
+  index: -1
+blue_lizi/blue_lizi0006
+  rotate: true
+  xy: 338, 82
+  size: 80, 89
+  orig: 101, 113
+  offset: 17, 13
+  index: -1
+blue_lizi/blue_lizi0007
+  rotate: true
+  xy: 138, 73
+  size: 84, 95
+  orig: 101, 113
+  offset: 13, 13
+  index: -1
+blue_lizi/blue_lizi0008
+  rotate: true
+  xy: 338, 164
+  size: 90, 99
+  orig: 101, 113
+  offset: 8, 14
+  index: -1
+blue_lizi/blue_lizi0009
+  rotate: true
+  xy: 239, 160
+  size: 94, 97
+  orig: 101, 113
+  offset: 4, 14
+  index: -1
+blue_lizi/blue_lizi0010
+  rotate: false
+  xy: 138, 159
+  size: 99, 95
+  orig: 101, 113
+  offset: 0, 14
+  index: -1
+blue_lizi/blue_lizi0011
+  rotate: false
+  xy: 429, 46
+  size: 79, 61
+  orig: 101, 113
+  offset: 1, 21
+  index: -1
+blue_lizi/blue_lizi0012
+  rotate: false
+  xy: 117, 7
+  size: 81, 64
+  orig: 101, 113
+  offset: 1, 18
+  index: -1
+blue_lizi/blue_lizi0013
+  rotate: false
+  xy: 200, 9
+  size: 80, 62
+  orig: 101, 113
+  offset: 2, 20
+  index: -1
+blue_lizi/blue_lizi0014
+  rotate: false
+  xy: 331, 19
+  size: 74, 61
+  orig: 101, 113
+  offset: 11, 22
+  index: -1
+blue_lizi/blue_lizi0015
+  rotate: false
+  xy: 235, 78
+  size: 31, 29
+  orig: 101, 113
+  offset: 53, 54
+  index: -1
+blue_lizi/blue_lizi0016
+  rotate: false
+  xy: 117, 104
+  size: 11, 10
+  orig: 101, 113
+  offset: 73, 56
+  index: -1
+blue_lizi/blue_lizi0017
+  rotate: true
+  xy: 429, 153
+  size: 9, 8
+  orig: 101, 113
+  offset: 75, 57
+  index: -1

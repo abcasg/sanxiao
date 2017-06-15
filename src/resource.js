@@ -18,10 +18,12 @@ var res = {
 //    res["cube_png" + i] = "res/cube" + i + ".png";
 //}
 for (var i = 1; i <= 5; i++) {
-    for (var j = 1; j <= 3; j++) {
+    for (var j = 1; j <= 5; j++) {
         res["fruit" + i + j] = "res/fruit_0" + i + "_0" + j + ".png";
     }
 }
+
+res["fruit111"] = "res/fruit_11_01.png";
 
 for (var i = 0; i < 5; i++) {
     res[effectType[i] + "_png"] = "res/fruitEle/" + effectType[i] + ".png";

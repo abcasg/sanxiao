@@ -1,0 +1,139 @@
+
+huang.png
+size: 512,512
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+baiguang
+  rotate: false
+  xy: 2, 250
+  size: 113, 112
+  orig: 113, 112
+  offset: 0, 0
+  index: -1
+yellow_guang
+  rotate: false
+  xy: 2, 364
+  size: 134, 138
+  orig: 134, 138
+  offset: 0, 0
+  index: -1
+yellow_lizi/yellow_lizi0001
+  rotate: true
+  xy: 248, 112
+  size: 57, 61
+  orig: 109, 123
+  offset: 24, 26
+  index: -1
+yellow_lizi/yellow_lizi0002
+  rotate: false
+  xy: 207, 246
+  size: 56, 64
+  orig: 109, 123
+  offset: 25, 28
+  index: -1
+yellow_lizi/yellow_lizi0003
+  rotate: false
+  xy: 248, 171
+  size: 62, 73
+  orig: 109, 123
+  offset: 25, 24
+  index: -1
+yellow_lizi/yellow_lizi0004
+  rotate: false
+  xy: 105, 156
+  size: 71, 83
+  orig: 109, 123
+  offset: 22, 20
+  index: -1
+yellow_lizi/yellow_lizi0005
+  rotate: true
+  xy: 138, 312
+  size: 79, 92
+  orig: 109, 123
+  offset: 20, 16
+  index: -1
+yellow_lizi/yellow_lizi0006
+  rotate: true
+  xy: 344, 413
+  size: 89, 101
+  orig: 109, 123
+  offset: 17, 12
+  index: -1
+yellow_lizi/yellow_lizi0007
+  rotate: false
+  xy: 2, 36
+  size: 92, 105
+  orig: 109, 123
+  offset: 13, 13
+  index: -1
+yellow_lizi/yellow_lizi0008
+  rotate: false
+  xy: 138, 393
+  size: 97, 109
+  orig: 109, 123
+  offset: 8, 14
+  index: -1
+yellow_lizi/yellow_lizi0009
+  rotate: false
+  xy: 2, 143
+  size: 101, 105
+  orig: 109, 123
+  offset: 4, 15
+  index: -1
+yellow_lizi/yellow_lizi0010
+  rotate: false
+  xy: 237, 402
+  size: 105, 100
+  orig: 109, 123
+  offset: 0, 16
+  index: -1
+yellow_lizi/yellow_lizi0011
+  rotate: true
+  xy: 178, 153
+  size: 86, 68
+  orig: 109, 123
+  offset: 1, 21
+  index: -1
+yellow_lizi/yellow_lizi0012
+  rotate: false
+  xy: 117, 241
+  size: 88, 69
+  orig: 109, 123
+  offset: 2, 18
+  index: -1
+yellow_lizi/yellow_lizi0013
+  rotate: false
+  xy: 344, 345
+  size: 85, 66
+  orig: 109, 123
+  offset: 3, 21
+  index: -1
+yellow_lizi/yellow_lizi0014
+  rotate: true
+  xy: 447, 423
+  size: 79, 63
+  orig: 109, 123
+  offset: 12, 24
+  index: -1
+yellow_lizi/yellow_lizi0015
+  rotate: false
+  xy: 2, 2
+  size: 34, 32
+  orig: 109, 123
+  offset: 56, 56
+  index: -1
+yellow_lizi/yellow_lizi0016
+  rotate: false
+  xy: 117, 348
+  size: 14, 14
+  orig: 109, 123
+  offset: 75, 58
+  index: -1
+yellow_lizi/yellow_lizi0017
+  rotate: false
+  xy: 105, 144
+  size: 10, 10
+  orig: 109, 123
+  offset: 78, 60
+  index: -1

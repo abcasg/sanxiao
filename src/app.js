@@ -60,7 +60,7 @@ var HelloWorldLayer = cc.Layer.extend({
         //this.addChild(bgLayer, 1);
 
         // 初始地图
-        EliminateHelper.createRandMap();
+        // EliminateHelper.createRandMap();
         //var tty = EliminateHelper._getEliType(cc.p(2, 2));
 
         var cubeLayer = new cc.Layer();
@@ -270,13 +270,25 @@ var HelloWorldLayer = cc.Layer.extend({
         EliminateHelper.debugLog();
         // 消除
         for (var i = 0; i < arry.length; i++) {
-            this.eliminateCube(arry[i]);
+            // 返回类型
+            var objP = arry[i];
+            var cubeValue = Map[objP.y][objP.x];
+            var celType = this.eliminateCube(objP);
+            if (celType > 0) {
+                // 特殊方块
+                EliminateHelper.dealSpecialCube(celType, objP, cubeValue);
+            }
         }
         this.scheduleOnce(this.downCubeInterFace, 0.5);
     },
     downCubeInterFace: function () {
+        // 特殊方块
+        this.createSpecialCubeSp();
+
         // 下落 maxTime 下落最大时间
+        EliminateHelper.debugLog();
         var mdArry = EliminateHelper.moveDownCube();
+        EliminateHelper.debugLog();
         var mMaxTime = this.moveDownCube(mdArry);
 
         var cdArry = [];
@@ -312,8 +324,10 @@ var HelloWorldLayer = cc.Layer.extend({
     eliminateCube: function (p) {
         var cubeArry = EliminateHelper.getElArry(p);
         if (cubeArry.length < 3) {
-            return;
+            return null;
         }
+        console.log("cubeArry.celType " + cubeArry.celType);
+
         // EliminateHelper.debugLog();
         for (var i = 0; i < cubeArry.length; i++) {
             var objP = cubeArry[i];
@@ -321,10 +335,10 @@ var HelloWorldLayer = cc.Layer.extend({
             cube.setVisible(false);
             cube.removeFromParent();
             // 爆炸
-            this.playESBomb(effectType[cube.index], objP);
+            this.playESBomb(effectType[cube.index - 1], objP);
         }
 
-
+        return cubeArry.celType;
     },
     moveDownCube: function (mdArry) {
         //   EliminateHelper.debugLog();
@@ -372,12 +386,17 @@ var HelloWorldLayer = cc.Layer.extend({
         }
         return maxTime;
     },
-    createCubeSp: function (index) {
-        var cubeSp = new cc.Sprite(res["fruit" + index + "1"]);
+    createCubeSp: function (index, special) {
+        var cubeSp = null;
+        if (special) {
+            cubeSp = new cc.Sprite(res["fruit" + index]);
+        } else {
+            cubeSp = new cc.Sprite(res["fruit" + index + "1"]);
+        }
         //var label = cc.LabelTTF.create("" + index, "Arial", 40);
         //label.setColor(cc.color(0, 0, 0));
         //label.setPosition(cc.p(this.cubeSize.width / 2, this.cubeSize.height / 2));
-        cubeSp.index = index - 1;
+        cubeSp.index = index;
         this.cubeLayer.addChild(cubeSp);
         var box = cubeSp.getBoundingBox();
         cubeSp.setScaleX(this.cubeSize.width / box.width);
@@ -385,6 +404,24 @@ var HelloWorldLayer = cc.Layer.extend({
 
         return cubeSp;
     },
+    // 创建特殊元素块
+    createSpecialCubeSp: function () {
+        for (var i = 0; i < this.mapSize.height; i++) {
+            for (var j = 0; j < this.mapSize.width; j++) {
+                var value = Map[i][j];
+                if (value > 10) {
+                    var originCube = this.getCubeSpByP(cc.p(j, i));
+                    if (originCube) {
+                        originCube.removeFromParent();
+                    }
+                    var cube = this.createCubeSp(value, true);
+                    cube.setPosition(this.getScreenP(cc.p(j, i)));
+                    this.setCubeSpByP(cc.p(j, i), cube);
+                }
+            }
+        }
+    },
+
     // 自身爆炸
     playESBomb: function (name, p, callFun) {
         this.isMoveFlag = true;
