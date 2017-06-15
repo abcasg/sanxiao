@@ -2,13 +2,14 @@ var res = {
     bg_png: "res/bg.png",
     bj01_png: "res/bj01.png",
     bj02_png: "res/bj02.png",
-    leopard_ani_png: "res/leopard/leopard_ani.png",
-    leopard_ani_json: "res/leopard/leopard_ani.json",
-    leopard_ani_atlas: "res/leopard/leopard_ani.atlas",
+    bj03_png: "res/bj03.png",
+    leopard_ani_png: "res/H5_Export/leopard/leopard_ani.png",
+    leopard_ani_json: "res/H5_Export/leopard/leopard_ani.json",
+    leopard_ani_atlas: "res/H5_Export/leopard/leopard_ani.atlas",
 
-    spineboy_png: "res/leopard/ndj.png",
-    spineboy_json: "res/leopard/ndj.json",
-    spineboy_atlas: "res/leopard/ndj.atlas",
+    spineboy_png: "res/H5_Export/jnx/jnx_huang.png",
+    spineboy_json: "res/H5_Export/jnx/jnx_huang.json",
+    spineboy_atlas: "res/H5_Export/jnx/jnx_huang.atlas",
 
     //cubebg_png: "res/cubebg.png"
 };

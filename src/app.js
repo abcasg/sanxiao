@@ -17,26 +17,32 @@ var HelloWorldLayer = cc.Layer.extend({
         return true;
     },
     initUI: function () {
+        var bj3 = new cc.Sprite(res.bj03_png);
+        bj3.setPosition(cc.p(160, 170));
+        this.addChild(bj3, 1);
+
         var bj2 = new cc.Sprite(res.bj02_png);
         bj2.setAnchorPoint(cc.p(0, 1));
         bj2.setPosition(cc.p(0, cc.winSize.height));
-        this.addChild(bj2, 1);
+        this.addChild(bj2, 6);
 
         var bj1 = new cc.Sprite(res.bj01_png);
         bj1.setAnchorPoint(cc.p(0, 0));
         bj1.setPosition(cc.p(0, 0));
-        this.addChild(bj1, 4);
+        this.addChild(bj1, 8);
 
-        var spine = new sp.SkeletonAnimation('res/leopard/leopard_ani.json', 'res/leopard/leopard_ani.atlas');
-        spine.setAnimation(0, 'action_7', true);
-        spine.setPosition(cc.p(cc.winSize.width / 2, cc.winSize.height / 2));
-        this.addChild(spine,7);
+        var spine = new sp.SkeletonAnimation(res.leopard_ani_json, res.leopard_ani_atlas);
+        spine.setAnimation(0, 'action_1', true);
+        spine.setPosition(cc.p(160, 335));
+        spine.setScale(2);
+        this.addChild(spine, 7);
 
-        //var spineboy = new sp.SkeletonAnimation('res/leopard/ndj.json', 'res/leopard/ndj.atlas');
-        //spineboy.setAnimation(0, 'zhizhen_start', true);
-        //spineboy.setScale(0.5);
-        //spineboy.setPosition(cc.p(cc.winSize.width / 2, cc.winSize.height / 2));
-        //this.addChild(spineboy,7);
+        var spineboy = new sp.SkeletonAnimation(res.spineboy_json, res.spineboy_atlas);
+        spineboy.setAnimation(0, 'shuxiao', true);
+        spineboy.setScale(0.5);
+        spineboy.setPosition(cc.p(cc.winSize.width / 2, cc.winSize.height / 2));
+       // this.addChild(spineboy, 7);
+
         //var bgLayer = new cc.Layer();
         //for (var m = 0; m < this.mapSize.height; m++) {
         //    for (var n = 0; n < this.mapSize.width; n++) {
@@ -68,7 +74,7 @@ var HelloWorldLayer = cc.Layer.extend({
                 this.cubeArry.push(cubeSp);
             }
         }
-        this.addChild(cubeLayer, 6);
+        this.addChild(cubeLayer, 5);
 
     },
     initData: function () {
