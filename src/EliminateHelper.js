@@ -73,16 +73,34 @@ var EliminateHelper = {
         cubeArry.celType = celType;
         return cubeArry;
     },
-    // 处理特殊方块
-    dealSpecialCube: function (type, p, cubeValue) {
-        var imageIndex = this._eliTImage[type];
-        // 彩虹消除
-        if (this._eliminateType.El5 == type) {
-            this._map[p.y][p.x] = imageIndex;
-        } else {
-            this._map[p.y][p.x] = cubeValue * 10 + imageIndex;
+    lineElimate: function (p, celType) {
+        var arry = [];
+        arry.push(p);
+        // 横
+        if (celType == this._eliminateType.El4h) {
+            this._searchEArry(cc.p(p.x - 1, p.y), cc.p(-1, 0), null, arry, null);
+            this._searchEArry(cc.p(p.x + 1, p.y), cc.p(1, 0), null, arry, null);
+            this.setMapArryEmpty(arry);
+            return arry;
+
+        } else if (celType == this._eliminateType.El4s) {
+            this._searchEArry(cc.p(p.x, p.y + 1), cc.p(0, 1), null, arry, null);
+            this._searchEArry(cc.p(p.x, p.y - 1), cc.p(0, -1), null, arry, null);
+            this.setMapArryEmpty(arry);
+            return arry;
         }
+        return null;
     },
+    //// 处理特殊方块
+    //dealSpecialCube: function (type, p, cubeValue) {
+    //    var imageIndex = this._eliTImage[type];
+    //    // 彩虹消除
+    //    if (this._eliminateType.El5 == type) {
+    //        this._map[p.y][p.x] = imageIndex;
+    //    } else {
+    //        this._map[p.y][p.x] = cubeValue * 10 + imageIndex;
+    //    }
+    //},
     // 创建下落的方块
     createDownCube: function () {
         var map = this._map;
@@ -139,6 +157,12 @@ var EliminateHelper = {
             this._map[objP.y][objP.x] = this._emptyType;
         }
     },
+    setMapArryEmpty: function (cubeArry) {
+        for (var i = 0; i < cubeArry.length; i++) {
+            var objP = cubeArry[i];
+            this._map[objP.y][objP.x] = this._emptyType;
+        }
+    },
     _searchEnableCube: function (p, value, cArry) {
         if (!this._checkP(p)) {
             return;
@@ -175,7 +199,8 @@ var EliminateHelper = {
         if (!this._checkP(p)) {
             return;
         }
-        if (value == this._map[p.y][p.x]) {
+        // value 为空直接搜索
+        if ((value == this._map[p.y][p.x]) || (!value)) {
             cArry.push(p);
         } else {
             return;
@@ -223,7 +248,7 @@ var EliminateHelper = {
     _isEliminateType: function (p) {
         var eliType = this._getEliType(p);
         if (eliType >= 0) {
-            console.log("eliType : " + eliType);
+            // console.log("eliType : " + eliType);
             return true;
         }
         return false;
@@ -238,21 +263,26 @@ var EliminateHelper = {
         var near1OblDobj = this._getNearOblique(p, 1);
 
         if (this._isEffectRainbow(p, value)) {
-            return this._eliminateType.El5;
+            // return this._eliminateType.El5;
+            return this._eliminateType.El4h;
         }
         if (this._isEffectT(near1Dobj, near2Dobj)) {
-            return this._eliminateType.ElT;
+            // return this._eliminateType.ElT;
+            return this._eliminateType.El4h;
         }
         if (this._isEffectL(near1Dobj, near2Dobj)) {
-            return this._eliminateType.ElL;
+            // return this._eliminateType.ElL;
+            return this._eliminateType.El4h;
         }
         if (this._isEffectTian(near1Dobj, near1OblDobj)) {
-            return this._eliminateType.ElTian;
+            // return this._eliminateType.ElTian;
+            return this._eliminateType.El4h;
         }
 
         var effectLineType = this._isEffectLine4(p, value);
         if (effectLineType && effectLineType >= 0) {
-            return effectLineType;
+            //return effectLineType;
+            return this._eliminateType.El4h;
         }
 
         if (this._isEffectLine(near1Dobj, near2Dobj)) {
@@ -500,14 +530,14 @@ var EliminateHelper = {
         this._map[p2.y][p2.x] = value;
     },
     debugLog: function () {
-        var map = this._map;
-        cc.log("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-        for (var m = 0; m < this._map.length; m++) {
-            var str = "[ ";
-            for (var n = 0; n < this._map[0].length; n++) {
-                str = str + map[m][n] + " , ";
-            }
-            console.log(str + "],");
-        }
+        //var map = this._map;
+        //cc.log("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+        //for (var m = 0; m < this._map.length; m++) {
+        //    var str = "[ ";
+        //    for (var n = 0; n < this._map[0].length; n++) {
+        //        str = str + map[m][n] + " , ";
+        //    }
+        //    console.log(str + "],");
+        //}
     }
 }
