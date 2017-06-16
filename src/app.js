@@ -326,6 +326,7 @@ var HelloWorldLayer = cc.Layer.extend({
             var objP = cubeArry[i];
             var cube = this.getCubeSpByP(objP);
             var cubeState = cube.spState;
+
             cube.setVisible(false);
             cube.removeFromParent();
 
@@ -335,8 +336,8 @@ var HelloWorldLayer = cc.Layer.extend({
             // 特殊消除
             if (cubeState) {
                 var eArry = EliminateHelper.lineElimate(objP, cubeState);
-                for (var i = 0; i < eArry.length; i++) {
-                    var cubeM = this.getCubeSpByP(eArry[i]);
+                for (var n = 0; n < eArry.length; n++) {
+                    var cubeM = this.getCubeSpByP(eArry[n]);
                     if (cubeM) {
                         cubeM.setVisible(false);
                         cubeM.removeFromParent();
